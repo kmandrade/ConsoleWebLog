@@ -94,16 +94,16 @@
         display: block;
     }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 900px) {
     .lista-input {
-        left: 30%; /* Largura menor para telas pequenas */
+        left: 66%; /* Largura menor para telas pequenas */
         width: 200px; /* Largura fixa, ajuste conforme necessário */
     }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 700px) {
     .lista-input {
-        left: 20%; /* Largura ainda menor para telas muito pequenas */
-        width: 150px; /* Largura fixa, ajuste conforme necessário */
+        left: 66%; /* Largura ainda menor para telas muito pequenas */
+        width: 170px; /* Largura fixa, ajuste conforme necessário */
     }
 }
