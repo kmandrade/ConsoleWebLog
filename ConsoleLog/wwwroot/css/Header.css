@@ -10,16 +10,26 @@
     display: flex;
     align-items: center;
 }
+.container-separador {
+    padding: 0 5px 0 10px; /* Menos espaço à direita do separador */
+    color: #000;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+}
+
+
 
 .lista-input-titulo {
     cursor: pointer;
+    font-size: 20px
 }
 
 .lista-input {
     display: none;
     position: absolute;
     top: 80%;
-    left: 50%;
+    left: 67%;
     z-index: 10;
     background-color: var(--cor-de-fundo); /* Cor de fundo branca */
     border: 1px solid #ccc; /* Borda cinza clara */
@@ -60,11 +70,12 @@
             background-color: #f44336; /* Cor de fundo para o botão 'Cancelar' */
         }
 .titulo-header {
-    width: 100px;
+    width: 150px;
     height: 25px;
     background-position: center;
     margin-top:15px;
     margin-bottom: 1rem;
+    font-size:20px
 }
 
 .cabecalho-menu-inputLog {
