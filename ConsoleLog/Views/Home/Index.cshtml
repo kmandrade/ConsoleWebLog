@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebUI</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/Style.css" />
+    <link rel="stylesheet" href="~/css/Header.css" />
+    <link rel="stylesheet" href="~/css/Footer.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap" rel="stylesheet">
+   
+</head>
+<body>
+    <header class="cabecalho">
+        <div class="container">
+            <p class="titulo-header">Log System</p>
+        </div>
+
+        <div class="container">
+            <input type="checkbox" id="inputLog" class="container-botao" />
+            <label for="inputLog" class="lista-input-titulo">Add Log Path</label>
+            <ul class="lista-input">
+                <li>
+                    System name: <input type="text" id="nomeSistema" />
+                </li>
+                <li>
+                    System path: <input type="text" id="caminhoArquivo" />
+                </li>
+            </ul>
+        </div>
+    </header>
+
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            <img src="img/MascoteNovo.png" class="icone-mascote" />
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

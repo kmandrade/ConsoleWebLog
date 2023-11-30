@@ -1,0 +1,49 @@
+﻿
+.cabecalho {
+    background-color: var(--branco);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+.container {
+    display: flex;
+    align-items: center;
+}
+
+.lista-input-titulo {
+    cursor: pointer;
+}
+
+.lista-input {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    background: white;
+    z-index: 10;
+}
+
+.titulo-header {
+    width: 100px;
+    height: 25px;
+    background-position: center;
+    margin-top:15px;
+    margin-bottom: 1rem;
+}
+
+.cabecalho-menu-inputLog {
+    width: 30px;
+    height: 30px;
+    background-position: center;
+    display: inline-block;
+}
+
+
+
+.container-botao {
+    display: none;
+}
+    .container-botao:checked + .lista-input-titulo + .lista-input {
+        display: block;
+    }
