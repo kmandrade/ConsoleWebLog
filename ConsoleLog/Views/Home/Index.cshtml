@@ -21,16 +21,22 @@
         <div class="container">
             <p class="titulo-header">Log System</p>
         </div>
+        
 
-        <div class="container">
+        <div class="container container-right">
+
             <input type="checkbox" id="inputLog" class="container-botao" />
-            <label for="inputLog" class="lista-input-titulo">Add Log Path</label>
+            <label for="inputLog" class="lista-input-titulo"> + Add Log Path</label>
             <ul class="lista-input">
                 <li>
                     System name: <input type="text" id="nomeSistema" />
                 </li>
                 <li>
                     System path: <input type="text" id="caminhoArquivo" />
+                </li>
+                <li class="button-container">
+                    <button type="button" id="saveButton">Save</button>
+                    <button type="button" id="cancelButton">Cancel</button>
                 </li>
             </ul>
         </div>
