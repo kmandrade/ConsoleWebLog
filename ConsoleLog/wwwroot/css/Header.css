@@ -38,7 +38,7 @@
     padding: 16px; /* Espaçamento interno */
     list-style-type: none; /* Remove os marcadores de lista */
     margin: 16px 0; /* Margem externa para separar dos outros elementos */
-    width: 300px; /* Largura fixa, ajuste conforme necessário */
+    width: 270px; /* Largura fixa, ajuste conforme necessário */
 }
     .lista-input li {
         margin-bottom: 8px; /* Espaço entre os itens da lista */
@@ -94,16 +94,22 @@
         display: block;
     }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 800px) {
     .lista-input {
-        left: 66%; /* Largura menor para telas pequenas */
-        width: 200px; /* Largura fixa, ajuste conforme necessário */
+        left: 50%; /* Largura menor para telas pequenas */
+        width: 260px; /* Largura menor, ajuste conforme necessário */
+    }
+    .container-separador{
+        display: none;
     }
 }
 
 @media screen and (max-width: 700px) {
     .lista-input {
-        left: 66%; /* Largura ainda menor para telas muito pequenas */
-        width: 170px; /* Largura fixa, ajuste conforme necessário */
+        left: 54%; /* Largura ainda menor para telas muito pequenas */
+        width: 170px; /* Largura menor, conforme necessário */
+    }
+    .container-separador {
+        display: none;
     }
 }
