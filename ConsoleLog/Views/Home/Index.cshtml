@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using ConsoleLog.Models
+@model LogsViewModel
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,12 +11,14 @@
     <link rel="stylesheet" href="~/css/Style.css" />
     <link rel="stylesheet" href="~/css/Header.css" />
     <link rel="stylesheet" href="~/css/Footer.css" />
+    <link rel="stylesheet" href="~/css/Sections.css" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap" rel="stylesheet">
-   
+
 </head>
 <body>
     <header class="cabecalho">
@@ -22,7 +26,6 @@
             <p class="titulo-header">Log System</p>
         </div>
         <div class="container container-separador">
-            
         </div>
         <p style="font-size:27px;  margin-top:15px; margin-bottom: 1rem;">|</p>
         <div class="container container">
@@ -43,8 +46,48 @@
         </div>
     </header>
 
+    <section class="section-grafico">
+    </section>
 
-    <footer class="border-top footer">
+
+
+    <section class="section-logs">
+        <div class="logs-sidebar">
+            <div class="sidebar-header">
+                <p style="align-items:center; font-size:20px">Added Systems</p>
+            </div>
+            <ul class="systems-list">
+                @foreach (var system in Model.ListSistemas)
+                {
+                    <li class="system">@system.NomeSistema</li>
+                }
+            </ul>
+        </div>
+        <div class="logs-container">
+            <form id="filterForm" class="search-container">
+                <select id="filterType" class="filter-type">
+                    <option value="Date">Data</option>
+                    <option value="Status">Status</option>
+                    <option value="Client">Cliente</option>
+                </select>
+                <input type="search" id="filterValue" placeholder="Digite o valor do filtro" class="search-input">
+                <button type="submit" class="filter-button">Aplicar Filtro</button>
+            </form>
+            @foreach (var log in Model.ListLogs)
+            {
+                <div class="log-entry @(log.StatusCode == 200 ? "success" : "error")">
+                    <span class="time">@log.HorarioLog.ToString("HH:mm dd/MM/yyyy")</span>
+                    <span class="source">@log.Client</span>
+                    <span class="message">@log.DescricaoLog</span>
+                </div>
+            }
+        </div>
+    </section>
+
+
+
+
+    <footer class="footer">
         <div class="container">
             <img src="img/MascoteNovo.png" class="icone-mascote" />
         </div>
@@ -54,3 +97,79 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
 </html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.system').click(function () {
+            // Remove a classe 'active' de todos os sistemas e adiciona ao clicado
+            $('.system').removeClass('active');
+            $(this).addClass('active');
+
+            // Obtém o nome do sistema
+            var systemName = $(this).text();
+
+            // Faz uma chamada AJAX para a controller desejada
+            $.ajax({
+                url: '@Url.Action("SelecionarSistema", "Home")', // Substitua com o nome da sua action e controller
+                type: 'POST',
+                data: { name: systemName }
+            });
+        });
+        // Função para aplicar a máscara de data
+        function applyDateMask(value) {
+            return value.replace(
+                /^(\d{2})(\d{2})(\d{4}).*/,
+                function (match, p1, p2, p3) {
+                    return `${p1}/${p2}/${p3}`;
+                }
+            );
+        }
+
+        // Evento de input para aplicar a máscara de data
+        $('#filterValue').on('input', function (e) {
+            var input = $(this);
+            var value = input.val();
+            var filterType = $('#filterType').val();
+
+            // Aplica a máscara se o tipo de filtro selecionado for 'Data'
+            if (filterType === 'Date') {
+                if (/^\d{2}$/.test(value) || /^\d{2}\/\d{2}$/.test(value)) {
+                    input.val(value + '/');
+                } else if (value.length > 10) {
+                    input.val(applyDateMask(value)); // Limita a entrada para o formato de data
+                }
+            }
+        });
+
+        // Evento para permitir a exclusão com backspace
+        $('#filterValue').on('keydown', function (e) {
+            var input = $(this);
+            var value = input.val();
+            var filterType = $('#filterType').val();
+
+            // Verifica se é um evento de backspace e o tipo de filtro é 'Data'
+            if (e.key === "Backspace") {
+                // Permite o backspace se houver uma barra no final
+                if (value[value.length - 1] === '/') {
+                    e.preventDefault();
+                    input.val(value.slice(0, -1));
+                }
+            }
+        });
+
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('filterForm').onsubmit = function (event) {
+            event.preventDefault(); // Impede o envio normal do formulário
+
+            var filterType = document.getElementById('filterType').value;
+            var filterValue = document.getElementById('filterValue').value;
+
+            // Substitua 'Filter' e 'Logs' pelos nomes reais da sua action e controller
+            var filterUrl = '@Url.Action("ObterLog", "Home")' + '?filterType=' + encodeURIComponent(filterType) + '&filterValue=' + encodeURIComponent(filterValue);
+
+            window.location.href = filterUrl;
+        };
+    });
+</script>
+

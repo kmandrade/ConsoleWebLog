@@ -15,10 +15,42 @@ namespace ConsoleLogMVC.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var systems = new List<SistemasModel>
+            {
+            // Adicione seus sistemas aqui
+            new SistemasModel { NomeSistema = "All" },
+            new SistemasModel { NomeSistema = "SSC" },
+            new SistemasModel { NomeSistema = "ADC" },
+            new SistemasModel { NomeSistema = "MOD" },
+            new SistemasModel { NomeSistema = "ADC" }
+            // outros sistemas...
+            };
+
+            var logs = new List<LogModel>
+            {
+            // Adicione seus logs aqui
+            new LogModel { HorarioLog = DateTime.Now, Client = "adc-cliente", DescricaoLog = "Success", StatusCode = 200 },
+            new LogModel { HorarioLog = DateTime.Now, Client = "adc-cliente", DescricaoLog = "Exception error msg", StatusCode = 500 },
+            new LogModel { HorarioLog = DateTime.Now, Client = "adc-cliente", DescricaoLog = "Exception error msg", StatusCode = 500 },
+            new LogModel { HorarioLog = DateTime.Now, Client = "adc-cliente", DescricaoLog = "Exception error msg", StatusCode = 500 },
+            new LogModel { HorarioLog = DateTime.Now, Client = "adc-cliente", DescricaoLog = "Exception error msg", StatusCode = 500 }
+            // outros logs...
+            };
+
+            var viewModel = new LogsViewModel
+            {
+                ListSistemas = systems,
+                ListLogs = logs
+            };
+
+            return View(viewModel);
         }
 
-        public IActionResult Privacy()
+        public IActionResult SelecionarSistema(string name)
+        {
+            return View();
+        }
+        public IActionResult ObterLog(string filterType, string filterValue)
         {
             return View();
         }
