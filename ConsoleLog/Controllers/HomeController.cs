@@ -48,11 +48,11 @@ namespace ConsoleLogMVC.Controllers
 
         public IActionResult SelecionarSistema(string name)
         {
-            return View();
+            return RedirectToAction("Index");
         }
         public IActionResult ObterLog(string filterType, string filterValue)
         {
-            return View();
+            return RedirectToAction("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -18,6 +18,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 
 </head>
 <body>
@@ -66,12 +68,15 @@
         <div class="logs-container">
             <form id="filterForm" class="search-container">
                 <select id="filterType" class="filter-type">
-                    <option value="Date">Data</option>
                     <option value="Status">Status</option>
-                    <option value="Client">Cliente</option>
+                    <option value="Descricao">Descrição</option>
+                    <option value="Date">Data</option>
+
                 </select>
                 <input type="search" id="filterValue" placeholder="Digite o valor do filtro" class="search-input">
-                <button type="submit" class="filter-button">Aplicar Filtro</button>
+                <button type="submit" class="filter-button">
+                    <i class="fas fa-search"></i>
+                </button>
             </form>
             @foreach (var log in Model.ListLogs)
             {
@@ -79,8 +84,10 @@
                     <span class="time">@log.HorarioLog.ToString("HH:mm dd/MM/yyyy")</span>
                     <span class="source">@log.Client</span>
                     <span class="message">@log.DescricaoLog</span>
+                    <span style="cursor:pointer" class="search-icon"><i class="fas fa-search"></i></span> <!-- Ícone de pesquisa adicionado aqui -->
                 </div>
             }
+
         </div>
     </section>
 
@@ -93,6 +100,7 @@
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/LogJS.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
@@ -114,47 +122,6 @@
                 type: 'POST',
                 data: { name: systemName }
             });
-        });
-        // Função para aplicar a máscara de data
-        function applyDateMask(value) {
-            return value.replace(
-                /^(\d{2})(\d{2})(\d{4}).*/,
-                function (match, p1, p2, p3) {
-                    return `${p1}/${p2}/${p3}`;
-                }
-            );
-        }
-
-        // Evento de input para aplicar a máscara de data
-        $('#filterValue').on('input', function (e) {
-            var input = $(this);
-            var value = input.val();
-            var filterType = $('#filterType').val();
-
-            // Aplica a máscara se o tipo de filtro selecionado for 'Data'
-            if (filterType === 'Date') {
-                if (/^\d{2}$/.test(value) || /^\d{2}\/\d{2}$/.test(value)) {
-                    input.val(value + '/');
-                } else if (value.length > 10) {
-                    input.val(applyDateMask(value)); // Limita a entrada para o formato de data
-                }
-            }
-        });
-
-        // Evento para permitir a exclusão com backspace
-        $('#filterValue').on('keydown', function (e) {
-            var input = $(this);
-            var value = input.val();
-            var filterType = $('#filterType').val();
-
-            // Verifica se é um evento de backspace e o tipo de filtro é 'Data'
-            if (e.key === "Backspace") {
-                // Permite o backspace se houver uma barra no final
-                if (value[value.length - 1] === '/') {
-                    e.preventDefault();
-                    input.val(value.slice(0, -1));
-                }
-            }
         });
 
     });

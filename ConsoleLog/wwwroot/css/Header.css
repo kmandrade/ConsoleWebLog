@@ -5,6 +5,7 @@
     justify-content: space-between;
     align-items: center;
     position: relative;
+    height: 10vh; /* Altura do cabeçalho, por exemplo, 10% da altura da viewport */
 }
 .container {
     display: flex;
@@ -106,7 +107,7 @@
 
 @media screen and (max-width: 700px) {
     .lista-input {
-        left: 54%; /* Largura ainda menor para telas muito pequenas */
+        left: 35%; /* Largura ainda menor para telas muito pequenas */
         width: 240px; /* Largura menor, conforme necessário */
     }
     .container-separador {

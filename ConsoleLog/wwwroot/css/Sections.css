@@ -2,7 +2,10 @@
     display: flex;
     font-family: 'Arial', sans-serif;
     margin: 3.5rem;
-    padding: 12rem 0.5rem;
+    padding: 3rem 1rem;
+    /* A seção principal pode ocupar o restante do espaço */
+    height: 80vh; /* ou calc(100vh - altura do cabeçalho - altura do rodapé) */
+    overflow: hidden; /* Impede rolagem nesta seção */
 }
 
 .logs-sidebar {
@@ -68,6 +71,7 @@
     border-left: 5px solid; /* Cor definida pelas classes de status */
     padding: 5px 10px;
     margin-bottom: 5px;
+    position: relative; /* Necessário para posicionar absolutamente o ícone de pesquisa */
 }
 
     .log-entry .time,
@@ -95,12 +99,20 @@
 }
 
 .search-input {
-    border: none;
+    border: 1px solid #ccc;
     outline: none;
     flex-grow: 1;
     border-radius: 20px;
     padding: 10px;
     font-size: 16px; /* Aumenta a legibilidade */
+}
+.search-icon {
+    position: absolute; /* Posiciona o ícone de forma absoluta dentro da .log-entry */
+    right: 2px; /* Espaçamento do lado direito */
+    top: 50%; /* Centraliza verticalmente */
+    transform: translateY(-50%); /* Ajuste fino para centralizar exatamente */
+    font-size: 1.3rem; /* Ajuste o tamanho do ícone conforme necessário */
+    cursor: pointer;
 }
 
 .filter-button {
@@ -122,16 +134,25 @@
     -moz-appearance: none;
     appearance: none;
     border: 1px solid #ccc;
-    border-radius: 15px;
+    background-color: transparent;
+    border-radius: 20px; /* Faz o círculo perfeito */
     padding: 5px 30px 5px 10px; /* Espaço extra à direita para o ícone */
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="grey" d="M7 10l5 5 5-5z"/></svg>');
     background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 30px;
+    background-position: center right 10px; /* Ajusta a posição do ícone para o centro à direita */
+    background-size: 30px; /* Tamanho do ícone */
     margin-right: 10px;
     font-size: 16px;
+    display: inline-flex; /* Permite o uso de flexbox para centralizar o conteúdo */
+    align-items: center; /* Centraliza o ícone verticalmente */
     cursor: pointer;
 }
+    /* Ajuste para o texto dentro do select para que ele não apareça */
+    .filter-type option {
+        width: 166px; /* Ajusta o padding à esquerda conforme necessário */
+    }
+
+    
 
 .filter-button:hover {
     background-color: #e2e2e2; /* Mudança sutil de cor ao passar o mouse */
@@ -170,5 +191,31 @@
     .system {
         cursor: pointer;
         white-space: nowrap; /* Impede que o texto quebre em várias linhas */
+    }
+}
+.filterForm{
+    width:100%;
+}
+@media screen and (max-width: 500px) {
+    .filter-button {
+        margin-left: -60px;
+    }
+    .filter-type {
+        font-size: 0; /* Oculta o texto */
+        padding-right: 37px; /* Ajusta o padding para evitar sobreposição do texto com o ícone */
+        background-position: center right 10px; /* Ajusta a posição do ícone */
+        background-size: 45px;
+        margin-right: 20px;
+        outline: none; /* Remove o contorno ao focar */
+    }
+
+        /* Estiliza os options para garantir que o texto ainda apareça ao abrir o select */
+        .filter-type option {
+            font-size: 15px; /* Mostra o texto quando o select é clicado */
+            padding-left: 5px; /* Ajusta o padding à esquerda conforme necessário */
+        }
+    .search-input {
+        font-size:14px;
+        margin: -35px;
     }
 }
