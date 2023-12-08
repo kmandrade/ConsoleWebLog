@@ -99,60 +99,14 @@
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/js/LogJS.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var selecioneSistemaUrl = '@Url.Action("SelecionarSistema", "Home")';
+        var obterLogUrl = '@Url.Action("ObterLog", "Home")';
+    </script>
+    <script src="~/js/LogJS.js" asp-append-version="true"></script>
+
 </body>
 </html>
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        // Carrega o estado salvo do local storage e marca o sistema selecionado
-        var selectedSystem = localStorage.getItem('selectedSystem');
-        if (selectedSystem) {
-            $('.system').filter(function () {
-                return $(this).text() === selectedSystem;
-            }).addClass('active');
-        }
-
-        // Evento de clique para os sistemas
-        $('.system').click(function () {
-            // Remove a classe 'active' de todos os sistemas
-            $('.system').removeClass('active');
-
-            // Adiciona a classe 'active' ao sistema clicado e salva no local storage
-            $(this).addClass('active');
-            localStorage.setItem('selectedSystem', $(this).text());
-
-            // Faz uma chamada AJAX para atualizar a seleção no servidor
-            var systemName = $(this).text();
-            $.ajax({
-                url: '@Url.Action("SelecionarSistema", "Home")', // Substitua com o nome da sua action e controller
-                type: 'POST',
-                data: { name: systemName },
-                success: function (response) {
-                    // Opcional: manipular a resposta, se necessário
-                },
-                error: function (xhr, status, error) {
-                    // Opcional: manipular erros
-                }
-            });
-        });
-
-    });
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('filterForm').onsubmit = function (event) {
-            event.preventDefault(); // Impede o envio normal do formulário
-
-            var filterType = document.getElementById('filterType').value;
-            var filterValue = document.getElementById('filterValue').value;
-
-            // Substitua 'Filter' e 'Logs' pelos nomes reais da sua action e controller
-            var filterUrl = '@Url.Action("ObterLog", "Home")' + '?filterType=' + encodeURIComponent(filterType) + '&filterValue=' + encodeURIComponent(filterValue);
-
-            window.location.href = filterUrl;
-        };
-    });
-
-</script>
 
