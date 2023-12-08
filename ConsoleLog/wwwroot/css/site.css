@@ -63,8 +63,8 @@ html, body {
     overflow: hidden; /* Impede a rolagem no corpo todo */
 }
 body {
-    background-image: url('../img/Pegadas.png');
-    background-repeat: repeat-x;
+    background-image: url('../img/Pegadas.png');    
+    background-repeat: repeat-y;
     background-size: auto 100%; /* Ajusta a altura da imagem para sempre ser 100% da altura da tela */
     background-color: #fff;
     background-position: center top; /* Centraliza horizontalmente e coloca no topo verticalmente */

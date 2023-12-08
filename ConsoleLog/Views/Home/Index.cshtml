@@ -107,19 +107,35 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        // Carrega o estado salvo do local storage e marca o sistema selecionado
+        var selectedSystem = localStorage.getItem('selectedSystem');
+        if (selectedSystem) {
+            $('.system').filter(function () {
+                return $(this).text() === selectedSystem;
+            }).addClass('active');
+        }
+
+        // Evento de clique para os sistemas
         $('.system').click(function () {
-            // Remove a classe 'active' de todos os sistemas e adiciona ao clicado
+            // Remove a classe 'active' de todos os sistemas
             $('.system').removeClass('active');
+
+            // Adiciona a classe 'active' ao sistema clicado e salva no local storage
             $(this).addClass('active');
+            localStorage.setItem('selectedSystem', $(this).text());
 
-            // Obtém o nome do sistema
+            // Faz uma chamada AJAX para atualizar a seleção no servidor
             var systemName = $(this).text();
-
-            // Faz uma chamada AJAX para a controller desejada
             $.ajax({
                 url: '@Url.Action("SelecionarSistema", "Home")', // Substitua com o nome da sua action e controller
                 type: 'POST',
-                data: { name: systemName }
+                data: { name: systemName },
+                success: function (response) {
+                    // Opcional: manipular a resposta, se necessário
+                },
+                error: function (xhr, status, error) {
+                    // Opcional: manipular erros
+                }
             });
         });
 
@@ -137,5 +153,6 @@
             window.location.href = filterUrl;
         };
     });
+
 </script>
 

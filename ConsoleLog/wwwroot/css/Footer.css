@@ -1,7 +1,7 @@
 ﻿.icone-mascote {
     position: fixed; /* Fixa a imagem em relação à janela de visualização */
     bottom: 10px; /* Ajuste a posição como preferir */
-    right: 10px; /* Ajuste a posição como preferir */
+    right: 0px; /* Ajuste a posição como preferir */
     z-index: 9999; /* Um valor alto para garantir que fique na frente */
     width: 18vh;
 }

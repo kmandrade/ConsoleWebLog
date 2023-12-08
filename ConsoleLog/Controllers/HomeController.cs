@@ -47,7 +47,7 @@ namespace ConsoleLogMVC.Controllers
             return View(viewModel);
         }
 
-        public IActionResult SelecionarSistema(string name)
+        public IActionResult SelecionarSistema(string name, string selected)
         {
             return RedirectToAction("Index");
         }
