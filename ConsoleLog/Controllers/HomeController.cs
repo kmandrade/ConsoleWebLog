@@ -33,6 +33,7 @@ namespace ConsoleLogMVC.Controllers
             new LogModel { HorarioLog = DateTime.Now, Client = "adc-cliente", DescricaoLog = "Exception error msg", StatusCode = 500 },
             new LogModel { HorarioLog = DateTime.Now, Client = "adc-cliente", DescricaoLog = "Exception error msg", StatusCode = 500 },
             new LogModel { HorarioLog = DateTime.Now, Client = "adc-cliente", DescricaoLog = "Exception error msg", StatusCode = 500 },
+            new LogModel { HorarioLog = DateTime.Now, Client = "adc-cliente", DescricaoLog = "Success", StatusCode = 200 },
             new LogModel { HorarioLog = DateTime.Now, Client = "adc-cliente", DescricaoLog = "Exception error msg", StatusCode = 500 }
             // outros logs...
             };

@@ -2,24 +2,24 @@
     display: flex;
     font-family: 'Arial', sans-serif;
     margin: 3.5rem;
-    padding: 3rem 1rem;
+    padding: 10rem 1rem;
     /* A seção principal pode ocupar o restante do espaço */
     height: 80vh; /* ou calc(100vh - altura do cabeçalho - altura do rodapé) */
     overflow: hidden; /* Impede rolagem nesta seção */
 }
 
 .logs-sidebar {
-    width: 15%; /* Ajuste a largura conforme necessário */
+    width: 18%; /* Ajuste a largura conforme necessário */
     background: #f2f2f2;
     padding: 10px;
-    height: 400px; /* Altura máxima para a barra lateral */
+    height: 50vh; /* Altura máxima para a barra lateral */
     overflow-y: auto; /* Barra de rolagem vertical se necessário */
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
     border: 1px solid #ccc;
     border-radius: 15px;
-    margin-right: 4px;/*ajustando para separar as divs */
+    margin-right: 4px; /*ajustando para separar as divs */
 }
 
 .sidebar-header {
@@ -57,7 +57,7 @@
     flex-grow: 1;
     padding: 10px;
     background: white;
-    height: 400px; /* Altura máxima para o contêiner de logs */
+    height: 50vh; /* Altura máxima para o contêiner de logs */
     overflow-y: auto; /* Barra de rolagem vertical se necessário */
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -106,6 +106,7 @@
     padding: 10px;
     font-size: 16px; /* Aumenta a legibilidade */
 }
+
 .search-icon {
     position: absolute; /* Posiciona o ícone de forma absoluta dentro da .log-entry */
     right: 2px; /* Espaçamento do lado direito */
@@ -152,22 +153,23 @@
         width: 166px; /* Ajusta o padding à esquerda conforme necessário */
     }
 
-    
+
 
 .filter-button:hover {
     background-color: #e2e2e2; /* Mudança sutil de cor ao passar o mouse */
 }
 
-@media (max-width: 900px) {
+
+
+@media (max-width: 1110px) {
     .section-logs {
         flex-direction: column; /* Mantém os elementos lado a lado */
     }
 
     .logs-sidebar {
         /* Ajuste a largura da sidebar para uma fração da tela ou um valor fixo */
-        flex: 1; /* Ajuste esta propriedade conforme necessário */
-        height: auto; /* A altura pode ser ajustada para 'auto' */
-        width:100%;
+        width: 100%;
+        height: 10vh;
     }
 
     .logs-container {
@@ -175,6 +177,7 @@
         flex: 3; /* Ajuste esta propriedade conforme necessário */
         height: auto; /* A altura pode ser ajustada para 'auto' */
     }
+
     .systems-list {
         list-style-type: none;
         padding: 0;
@@ -193,13 +196,17 @@
         white-space: nowrap; /* Impede que o texto quebre em várias linhas */
     }
 }
-.filterForm{
-    width:100%;
+
+.filterForm {
+    width: 100%;
 }
+
+
 @media screen and (max-width: 500px) {
     .filter-button {
         margin-left: -60px;
     }
+
     .filter-type {
         font-size: 0; /* Oculta o texto */
         padding-right: 37px; /* Ajusta o padding para evitar sobreposição do texto com o ícone */
@@ -214,8 +221,9 @@
             font-size: 15px; /* Mostra o texto quando o select é clicado */
             padding-left: 5px; /* Ajusta o padding à esquerda conforme necessário */
         }
+
     .search-input {
-        font-size:14px;
+        font-size: 14px;
         margin: -35px;
     }
 }
