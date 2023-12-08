@@ -9,7 +9,7 @@
 }
 
 .logs-sidebar {
-    width: 18%; /* Ajuste a largura conforme necessário */
+    width: 17%; /* Ajuste a largura conforme necessário */
     background: #f2f2f2;
     padding: 10px;
     height: 50vh; /* Altura máxima para a barra lateral */
@@ -37,15 +37,17 @@
     display: flex; /* Exibe os itens da lista como flex itens */
     flex-direction: column; /* Organiza os itens da lista em uma linha */
     gap: 10px; /* Espaço entre os itens da lista, ajuste conforme necessário */
-    justify-content: center; /* Centraliza os itens na lista horizontalmente */
+    justify-content: flex-start; /* Alinha os itens à esquerda */
     align-items: center; /* Centraliza os itens na lista verticalmente */
-    overflow-x: auto; /* Permite rolagem horizontal se a lista for muito larga */
+    overflow-x: hidden; /* Oculta a barra de rolagem horizontal desnecessária */
 }
 
 .system {
     padding: 5px 10px;
     cursor: pointer;
     white-space: nowrap; /* Impede que o texto quebre em várias linhas */
+    flex: 0 0 auto; /* Não permite que os itens da lista cresçam ou encolham */
+    margin: 5px; /* Adiciona um pouco de espaço entre os itens */
 }
 
     .system.active {
@@ -65,6 +67,8 @@
     border: 1px solid #ccc;
     border-radius: 15px;
     margin-left: 4px; /*ajustando para separar as divs */
+    display: flex; /* Ou 'block', dependendo do layout desejado */
+    flex-direction: column; /* Organiza os filhos verticalmente */
 }
 
 .log-entry {
@@ -95,7 +99,10 @@
     border: 1px solid #ccc;
     border-radius: 20px;
     padding: 5px;
-    margin-bottom: 10px;
+    width: 100%; /* Garante que não ultrapasse a largura do container */
+    max-width: 100%; /* Impede que o container de pesquisa ultrapasse a largura do seu pai */
+    box-sizing: border-box; /* Garante que padding e border sejam incluídos no width */
+    margin-bottom: 20px; /* Espaçamento entre o search-container e os logs abaixo */
 }
 
 .search-input {
@@ -105,6 +112,7 @@
     border-radius: 20px;
     padding: 10px;
     font-size: 16px; /* Aumenta a legibilidade */
+    max-width: calc(100% - 50px); /* Reduz a largura máxima para acomodar o botão de pesquisa */
 }
 
 .search-icon {
@@ -123,6 +131,7 @@
     border-radius: 20px;
     padding: 5px 15px; /* Aumenta o padding para corresponder ao do input */
     margin-left: 5px;
+    flex-shrink: 0; /* Impede que o botão encolha abaixo do tamanho desejado */
 }
 
 .search-input:focus {
@@ -169,7 +178,7 @@
     .logs-sidebar {
         /* Ajuste a largura da sidebar para uma fração da tela ou um valor fixo */
         width: 100%;
-        height: 10vh;
+        height: 12vh;
     }
 
     .logs-container {
@@ -189,6 +198,11 @@
         align-items: center; /* Centraliza os itens na lista verticalmente */
         overflow-x: auto; /* Permite rolagem horizontal se a lista for muito larga */
         width: 100%;
+        margin-top: 20px; /* Adiciona 20px de margem no topo para telas pequenas */
+    }
+
+    .search-container {
+        margin-bottom: 20px; /* Adiciona 20px de margem na parte inferior para telas pequenas */
     }
 
     .system {
@@ -203,18 +217,34 @@
 
 
 @media screen and (max-width: 500px) {
+
     .filter-button {
-        margin-left: -60px;
+        margin-left: -10px; /* Mantém a margem à direita */
     }
 
     .filter-type {
         font-size: 0; /* Oculta o texto */
-        padding-right: 37px; /* Ajusta o padding para evitar sobreposição do texto com o ícone */
-        background-position: center right 10px; /* Ajusta a posição do ícone */
-        background-size: 45px;
-        margin-right: 20px;
+        padding: 0; /* Remove o padding */
+        border: none; /* Remove a borda */
+        background-color: transparent; /* Mantém o fundo transparente */
+        width: 45px; /* Define uma largura para o seletor */
+        height: 45px; /* Define uma altura para o seletor */
+        background-position: center; /* Centraliza a seta para baixo */
+        background-size: 6vh; /* Aumenta o ícone. Ajuste o valor percentual conforme desejado */
+        margin-right: 1px; /* Mantém a margem à direita */
         outline: none; /* Remove o contorno ao focar */
+
+        cursor: pointer;
     }
+
+        .filter-type::after {
+            content: '';
+            display: inline-block;
+            width: 100%; /* Faz o ícone de seta se estender para o tamanho total do container */
+            height: 100%; /* Faz o ícone de seta se estender para o tamanho total do container */
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="grey" d="M7 10l5 5 5-5z"/></svg>') no-repeat center center;
+            background-size: cover; /* Garante que o ícone cubra todo o espaço disponível */
+        }
 
         /* Estiliza os options para garantir que o texto ainda apareça ao abrir o select */
         .filter-type option {
@@ -224,6 +254,37 @@
 
     .search-input {
         font-size: 14px;
-        margin: -35px;
+        margin: 0; /* Ajusta a margem se necessário */
+        width: calc(100% - 50px); /* Ajusta a largura para considerar o botão de pesquisa */
+    }
+
+    .systems-list {
+        font-size: 13px;
+        margin: 1px;
+        padding: 1px;
+    }
+}
+
+@media screen and (max-width: 1110px) {
+    .icone-mascote {
+        bottom: 10px;
+        right: 10px;
+        width: 14vh;
+    }
+
+    .section-logs {
+        height: 85vh;
+        margin: 0.5rem;
+        padding: 6rem 1rem;
+    }
+
+    .systems-list {
+        font-size: 14px;
+        padding: 1px;
+        margin: -1px;
+    }
+
+    .logs-container {
+        height: 85vh;
     }
 }
