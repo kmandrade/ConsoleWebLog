@@ -53,6 +53,8 @@
     .system.active {
         background: red;
         color: white;
+        border: 1px solid #ccc;
+        border-radius: 15px;
     }
 
 .logs-container {
@@ -130,6 +132,7 @@
     padding: 5px 15px; /* Aumenta o padding para corresponder ao do input */
     margin-left: 5px;
     flex-shrink: 0; /* Impede que o botão encolha abaixo do tamanho desejado */
+    font-size: 1.3rem; /* Ajuste o tamanho do ícone conforme necessário */
 }
 
 .search-input:focus {

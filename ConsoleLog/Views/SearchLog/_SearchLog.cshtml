@@ -1,0 +1,40 @@
+﻿@using ConsoleLog.Models
+@model LogsViewModel
+<section class="section-logs">
+    <div class="logs-sidebar">
+        <div class="sidebar-header">
+            <p style="align-items:center; font-size:20px; font-weight:bold;">Added Systems</p>
+        </div>
+        <ul class="systems-list">
+            @foreach (var system in Model.ListSistemas)
+            {
+                <li class="system">@system.NomeSistema</li>
+            }
+        </ul>
+    </div>
+    <br />
+    <div class="logs-container">
+        <form id="filterForm" class="search-container">
+            <select id="filterType" class="filter-type">
+                <option value="Status">Status</option>
+                <option value="Descricao">Descrição</option>
+                <option value="Date">Data</option>
+
+            </select>
+            <input type="search" id="filterValue" placeholder="Digite o valor do filtro" class="search-input">
+            <button type="submit" class="filter-button">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+        @foreach (var log in Model.ListLogs)
+        {
+            <div class="log-entry @(log.StatusCode == 200 ? "success" : "error")">
+                <span class="time">@log.HorarioLog.ToString("HH:mm dd/MM/yyyy")</span>
+                <span class="source">@log.Client</span>
+                <span class="message">@log.DescricaoLog</span>
+                <span style="cursor:pointer" class="search-icon"><i class="fas fa-search"></i></span> <!-- Ícone de pesquisa adicionado aqui -->
+            </div>
+        }
+
+    </div>
+</section>

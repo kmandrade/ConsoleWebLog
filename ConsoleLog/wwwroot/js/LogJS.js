@@ -9,7 +9,6 @@ $(document).ready(function () {
             }
         });
     }
-
     // Evento de clique para os elementos do sistema
     $('.system').on('click', function () {
         // Remove a classe 'active' de todos os sistemas
@@ -28,12 +27,7 @@ $(document).ready(function () {
             url: selecioneSistemaUrl,
             type: 'POST',
             data: { name: systemName, selected: isSelected },
-            success: function (response) {
-                // Opcional: manipular a resposta do servidor se necessário
-            },
-            error: function (xhr, status, error) {
-                // Opcional: manipular erros de comunicação ou servidor
-            }
+            
         });
     });
 
@@ -47,7 +41,6 @@ $(document).ready(function () {
         window.location.href = obterLogUrl + '?filterType=' + encodeURIComponent(filterType) + '&filterValue=' + encodeURIComponent(filterValue);
     });
 
-    // Outros eventos ou lógica necessária podem ser adicionados aqui
 });
 
 // Funções auxiliares podem ser adicionadas fora do $(document).ready se não interagirem diretamente com o DOM

@@ -2,7 +2,7 @@
 
 namespace ConsoleLogMVC.Controllers
 {
-    public class LogController : Controller
+    public class SearchLogController : Controller
     {
         public IActionResult Index()
         {
