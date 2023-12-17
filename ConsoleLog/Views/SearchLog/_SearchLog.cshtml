@@ -8,7 +8,12 @@
         <ul class="systems-list">
             @foreach (var system in Model.ListSistemas)
             {
-                <li class="system">@system.NomeSistema</li>
+                <li class="system">
+                    @system.NomeSistema
+                    <button type="button" class="delete-system-button" data-system="@system.NomeSistema">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </li>
             }
         </ul>
     </div>
