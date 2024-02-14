@@ -1,7 +1,7 @@
 ﻿// LogsJS.js
 $(document).ready(function () {
     // Verifica se algum sistema foi previamente selecionado e restaura esse estado
-    var selectedSystem = localStorage.getItem('selectedSystem');
+    let selectedSystem = localStorage.getItem('selectedSystem');
     if (selectedSystem) {
         $('.system').each(function () {
             if ($(this).text() === selectedSystem) {
@@ -16,25 +16,32 @@ $(document).ready(function () {
 
         // Adiciona a classe 'active' ao sistema clicado e salva no localStorage
         $(this).addClass('active');
-        var systemName = $(this).text().trim(); // Adiciona .trim() para remover espaços em branco
+        let systemName = $(this).text().trim();
         localStorage.setItem('selectedSystem', systemName);
 
-        // Define o estado de seleção
-        var isSelected = $(this).hasClass('active');
+        
+        // Recupera a lista atual de sistemas do localStorage
+        let sistemas = JSON.parse(localStorage.getItem('sistemas') || '[]');
+
+        // Encontra o caminho do arquivo para o sistema selecionado
+        let sistemaSelecionado = sistemas.find(sistema => sistema.NomeSistema.trim() === systemName);
+        let caminhoArquivo = sistemaSelecionado ? sistemaSelecionado.CaminhoLogSistema : null;
+
+
 
         // Faz uma chamada AJAX para atualizar a seleção no servidor
         $.ajax({
             url: selecioneSistemaUrl,
             type: 'POST',
-            data: { name: systemName, selected: isSelected }
+            data: { name: systemName, path: caminhoArquivo }
         });
     });
 
     // Manipulador do evento de envio do formulário de filtro
     $('#filterForm').on('submit', function (event) {
         event.preventDefault();
-        var filterType = $('#filterType').val();
-        var filterValue = $('#filterValue').val();
+        let filterType = $('#filterType').val();
+        let filterValue = $('#filterValue').val();
 
         // Redireciona ou faz outra chamada AJAX conforme necessário
         window.location.href = obterLogUrl + '?filterType=' + encodeURIComponent(filterType) + '&filterValue=' + encodeURIComponent(filterValue);
@@ -60,8 +67,8 @@ $(document).ready(function () {
 
     // Adicionando evento de clique ao botão saveButton
     $('#saveButton').on('click', function () {
-        var nomeSistema = $('#nomeSistema').val();
-        var caminhoArquivo = $('#caminhoArquivo').val();
+        let nomeSistema = $('#nomeSistema').val();
+        let caminhoArquivo = $('#caminhoArquivo').val();
 
         // Verifique se o nome do sistema e o caminho do arquivo não estão vazios
         if (!nomeSistema || !caminhoArquivo) {
@@ -70,7 +77,7 @@ $(document).ready(function () {
         }
 
         // Recupera a lista atual de sistemas do localStorage
-        var sistemas = JSON.parse(localStorage.getItem('sistemas') || '[]');
+        let sistemas = JSON.parse(localStorage.getItem('sistemas') || '[]');
 
         // Adiciona o novo sistema à lista
         sistemas.push({ NomeSistema: nomeSistema, CaminhoLogSistema: caminhoArquivo });
@@ -99,13 +106,13 @@ $(document).ready(function () {
     });
     // Vincula o evento de clique para os botões de deletar sistema de forma dinâmica
     $('.systems-list').on('click', '.delete-system-button', function () {
-        var systemToDelete = $(this).data('system');
+        let systemToDelete = $(this).data('system');
 
         // Recupera a lista atual de sistemas do localStorage
-        var sistemas = JSON.parse(localStorage.getItem('sistemas') || '[]');
+        let sistemas = JSON.parse(localStorage.getItem('sistemas') || '[]');
 
         // Filtra a lista para remover o sistema especificado
-        var filteredSistemas = sistemas.filter(sistema => sistema.NomeSistema !== systemToDelete);
+        let filteredSistemas = sistemas.filter(sistema => sistema.NomeSistema !== systemToDelete);
 
         // Salva a lista atualizada no localStorage
         localStorage.setItem('sistemas', JSON.stringify(filteredSistemas));
@@ -122,13 +129,13 @@ $(document).ready(function () {
 
     // Vincula o evento de clique para os botões de deletar sistema de forma dinâmica
     $('.systems-list').on('click', '.delete-system-button', function () {
-        var systemToDelete = $(this).data('system');
+        let systemToDelete = $(this).data('system');
 
         // Recupera a lista atual de sistemas do localStorage
-        var sistemas = JSON.parse(localStorage.getItem('sistemas') || '[]');
+        let sistemas = JSON.parse(localStorage.getItem('sistemas') || '[]');
 
         // Filtra a lista para remover o sistema especificado
-        var filteredSistemas = sistemas.filter(function (sistema) {
+        let filteredSistemas = sistemas.filter(function (sistema) {
             return sistema.NomeSistema !== systemToDelete;
         });
 
@@ -139,14 +146,32 @@ $(document).ready(function () {
         $(this).closest('li.system').remove();
     });
 
-    
+
+    // Adicionando evento de clique ao checkbox para controlar a exibição da div .lista-input
+    $('#inputLog').change(function () {
+        if (this.checked) {
+            // Mostra a div .lista-input se o checkbox está marcado
+            $('.lista-input').show();
+        } else {
+            // Oculta a div .lista-input se o checkbox não está marcado
+            $('.lista-input').hide();
+        }
+    });
+    // Adicionando evento de clique ao botão cancelButton
+    $('#cancelButton').on('click', function () {
+        // Oculta a div lista-input
+        $('.lista-input').hide();
+
+        // Opcionalmente, desmarca o checkbox se desejar resetar o estado do toggle
+        $('#inputLog').prop('checked', false);
+    });
 
 });
 
-
+//Função para obter  alista de sistemas existentes e renderizar a classe de lixeira para cada item
 function renderSystemsList() {
-    var sistemas = JSON.parse(localStorage.getItem('sistemas') || '[]');
-    var systemsList = $('.systems-list');
+    let sistemas = JSON.parse(localStorage.getItem('sistemas') || '[]');
+    let systemsList = $('.systems-list');
     systemsList.empty(); // Limpa a lista atual
 
     sistemas.forEach(function (sistema) {
@@ -175,9 +200,9 @@ function applyDateMask(value) {
 
 // Evento de input para aplicar a máscara de data
 $('#filterValue').on('input', function (e) {
-    var input = $(this);
-    var value = input.val();
-    var filterType = $('#filterType').val();
+    let input = $(this);
+    let value = input.val();
+    let filterType = $('#filterType').val();
 
     // Aplica a máscara se o tipo de filtro selecionado for 'Data'
     if (filterType === 'Date') {
@@ -192,9 +217,9 @@ $('#filterValue').on('input', function (e) {
 
 // Evento para permitir a exclusão com backspace
 $('#filterValue').on('keydown', function (e) {
-    var input = $(this);
-    var value = input.val();
-    var filterType = $('#filterType').val();
+    let input = $(this);
+    let value = input.val();
+    let filterType = $('#filterType').val();
 
     // Verifica se é um evento de backspace e o tipo de filtro é 'Data'
     if (e.key === "Backspace") {

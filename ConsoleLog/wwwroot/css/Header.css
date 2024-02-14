@@ -91,9 +91,7 @@
 .container-botao {
     display: none;
 }
-    .container-botao:checked + .lista-input-titulo + .lista-input {
-        display: block;
-    }
+
 
 @media screen and (max-width: 800px) {
     .lista-input {

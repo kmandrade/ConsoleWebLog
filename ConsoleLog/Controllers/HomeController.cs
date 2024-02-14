@@ -49,6 +49,12 @@ namespace ConsoleLogMVC.Controllers
 
             return View(viewModel);
         }
+        /// <summary>
+        /// Salva o caminho da pasta onde existe o log do sistema.
+        /// </summary>
+        /// <param name="nomeSistema"></param>
+        /// <param name="caminhoArquivo"></param>
+        /// <returns></returns>
         public IActionResult SalvarSistemaLog(string nomeSistema, string caminhoArquivo)
         {
             if (ConsoleLogService.ObterArquivoLogMaisRecente(nomeSistema, caminhoArquivo))
@@ -63,9 +69,24 @@ namespace ConsoleLogMVC.Controllers
             }
             return RedirectToAction("Index");
         }
-        public IActionResult SelecionarSistema(string name, string selected)
+        public IActionResult SelecionarSistema(string name, string path)
         {
-            return RedirectToAction("Index");
+            List<SistemasModel> sistemas = new List<SistemasModel>();
+
+            string sistemasJson = HttpContext.Session.GetString("Sistemas");
+            if (!string.IsNullOrEmpty(sistemasJson))
+            {
+                sistemas = JsonConvert.DeserializeObject<List<SistemasModel>>(sistemasJson);
+            }
+            var viewModel = new LogsViewModel
+            {
+                ListSistemas = sistemas,
+                ListLogs = ObterLogsSistema(path)
+            };
+
+            
+            return View(viewModel);
+
         }
         public IActionResult ObterLog(string filterType, string filterValue)
         {
@@ -83,8 +104,15 @@ namespace ConsoleLogMVC.Controllers
             // Processar a lista de sistemas aqui (salvar na sessão ou no banco de dados)
             HttpContext.Session.SetString("Sistemas", JsonConvert.SerializeObject(sistemas));
 
-            // Redirecionar para a action Index
             return RedirectToAction("Index");
         }
+
+        private List<LogModel> ObterLogsSistema(string path)
+        {
+            string logsString = ConsoleLogService.ObterInformacoesLog(path);
+            List<LogModel> logs = ConsoleLogService.ParseLogsFromString(logsString);
+            return logs;
+        }
+
     }
 }
