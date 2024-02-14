@@ -51,8 +51,9 @@
     <section class="section-grafico">
     </section>
 
-
-    @Html.Partial("~/Views/SearchLog/_SearchLog.cshtml", Model)
+    @{
+        Html.RenderPartial("SearchLog",Model);
+    }
 
 
     <footer class="footer">
@@ -62,8 +63,9 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
+
     <script type="text/javascript">
-        var selecioneSistemaUrl = '@Url.Action("SelecionarSistema", "Home")';
+        var selecioneSistemaUrl = '@Url.Action("SearchLog", "Home")';
         var obterLogUrl = '@Url.Action("ObterLog", "Home")';
         var indexSistemas = '@Url.Action("ProcessarSistemas", "Home")';
         var index = '@Url.Action("Index", "Home")';

@@ -28,12 +28,20 @@ $(document).ready(function () {
         let caminhoArquivo = sistemaSelecionado ? sistemaSelecionado.CaminhoLogSistema : null;
 
 
+        $('.logs-container').empty();
 
         // Faz uma chamada AJAX para atualizar a seleção no servidor
         $.ajax({
             url: selecioneSistemaUrl,
             type: 'POST',
-            data: { name: systemName, path: caminhoArquivo }
+            data: { name: systemName, path: caminhoArquivo },
+            success: function (response) {
+                // Atualiza o DOM com o conteúdo recebido
+                $('.logs-container').html(response);
+            },
+            error: function (error) {
+                console.error('Erro ao receber a lista de sistemas', error);
+            }
         });
     });
 
@@ -149,21 +157,12 @@ $(document).ready(function () {
 
     // Adicionando evento de clique ao checkbox para controlar a exibição da div .lista-input
     $('#inputLog').change(function () {
-        if (this.checked) {
-            // Mostra a div .lista-input se o checkbox está marcado
-            $('.lista-input').show();
-        } else {
-            // Oculta a div .lista-input se o checkbox não está marcado
-            $('.lista-input').hide();
-        }
+        $('.lista-input').toggle(this.checked);
     });
     // Adicionando evento de clique ao botão cancelButton
     $('#cancelButton').on('click', function () {
-        // Oculta a div lista-input
         $('.lista-input').hide();
-
-        // Opcionalmente, desmarca o checkbox se desejar resetar o estado do toggle
-        $('#inputLog').prop('checked', false);
+        $('#inputLog').prop('checked', false); // Resetar o estado do checkbox
     });
 
 });

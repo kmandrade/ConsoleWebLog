@@ -44,6 +44,42 @@ namespace ConsoleLogMVC.Controllers
 
             return View(viewModel);
         }
+        
+        public IActionResult SearchLog(string name, string path)
+        {
+
+            List<SistemasModel> sistemas = new List<SistemasModel>();
+
+            string sistemasJson = HttpContext.Session.GetString("Sistemas");
+            if (!string.IsNullOrEmpty(sistemasJson))
+            {
+                sistemas = JsonConvert.DeserializeObject<List<SistemasModel>>(sistemasJson);
+            }
+            var viewModel = new LogsViewModel
+            {
+                ListSistemas = sistemas,
+                ListLogs = ObterLogsSistema(path)
+            };
+            ViewBag.MensagemDeBoasVindas = "Bem-vindo ao nosso site!";
+
+            return PartialView(viewModel);
+        }
+        public IActionResult _SearchLog(string path)
+        {
+            List<SistemasModel> sistemas = new List<SistemasModel>();
+
+            string sistemasJson = HttpContext.Session.GetString("Sistemas");
+            if (!string.IsNullOrEmpty(sistemasJson))
+            {
+                sistemas = JsonConvert.DeserializeObject<List<SistemasModel>>(sistemasJson);
+            }
+            var viewModel = new LogsViewModel
+            {
+                ListSistemas = sistemas,
+                ListLogs = ObterLogsSistema(path)
+            };
+            return View("View", viewModel);
+        }
         /// <summary>
         /// Salva o caminho da pasta onde existe o log do sistema.
         /// </summary>
@@ -64,29 +100,6 @@ namespace ConsoleLogMVC.Controllers
             }
             return RedirectToAction("Index");
         }
-        public IActionResult SelecionarSistema(string name, string path)
-        {
-
-            return RedirectToAction("_SearchLog", new { path = path });
-
-        }
-        public IActionResult _SearchLog(string path)
-        {
-            List<SistemasModel> sistemas = new List<SistemasModel>();
-
-            string sistemasJson = HttpContext.Session.GetString("Sistemas");
-            if (!string.IsNullOrEmpty(sistemasJson))
-            {
-                sistemas = JsonConvert.DeserializeObject<List<SistemasModel>>(sistemasJson);
-            }
-            var viewModel = new LogsViewModel
-            {
-                ListSistemas = sistemas,
-                ListLogs = ObterLogsSistema(path)
-            };
-            return View("~/Views/SearchLog/_SearchLog.cshtml", viewModel);
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
