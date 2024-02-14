@@ -77,12 +77,29 @@ namespace ConsoleLog.Service
         public static string ObterInformacoesLog(string path)
         {
 
-            StringBuilder informacoesLog = new();
-            var file = File.ReadLines(path);
-            bool fileExists = File.Exists(path);
+            StringBuilder informacoesLog = new StringBuilder();
+           
             try
             {
-                var logEntries = fileExists ? GetDateAllFile(file) : throw new ArgumentNullException(path);
+                bool folderExists = Directory.Exists(path);
+                if (!folderExists)
+                {
+                    throw new ArgumentNullException(nameof(path), "O caminho da pasta não existe.");
+                }
+
+                // Obtém todos os arquivos da pasta
+                var files = Directory.GetFiles(path);
+
+                // Ordena os arquivos por data de modificação, do mais recente para o mais antigo
+                var mostRecentFile = files.OrderByDescending(f => new FileInfo(f).LastWriteTime).FirstOrDefault();
+
+                if (string.IsNullOrEmpty(mostRecentFile))
+                {
+                    throw new FileNotFoundException("Nenhum arquivo encontrado na pasta.");
+                }
+
+                var fileLines = File.ReadLines(mostRecentFile);
+                var logEntries = GetDateAllFile(fileLines);
 
                 // Buscar pela última ocorrência do termo no arquivo de logs
                 foreach (var entry in logEntries)
@@ -111,19 +128,29 @@ namespace ConsoleLog.Service
             var logEntries = new SortedDictionary<DateTime, LogEntry>(Comparer<DateTime>.Create((x, y) => y.CompareTo(x)));
             DateTime lastDate = DateTime.MinValue;
 
+            // Ajuste na expressão regular para incluir a fração de segundo e o fuso horário
+            var regexPattern = @"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} -\d{2}:\d{2})";
+
             foreach (var line in file)
             {
                 // Regex para identificar a data e hora no início de cada linha de log
-                var match = Regex.Match(line, @"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})");
+                var match = Regex.Match(line, regexPattern);
                 if (match.Success)
                 {
-                    DateTime timestamp = DateTime.Parse(match.Groups[1].Value);
-                    lastDate = timestamp;
-
-                    // Se ainda não tem uma entrada para essa data, cria uma nova
-                    if (!logEntries.ContainsKey(timestamp))
+                    // Como o .NET padrão não lida diretamente com fuso horário na forma "-03:00" em DateTime.Parse,
+                    // você pode remover a informação do fuso horário para o parsing, ou usar DateTimeOffset.Parse
+                    // Exemplo removendo a informação do fuso horário para simplificar
+                    var dateTimeStr = match.Groups[1].Value.Substring(0, match.Groups[1].Value.LastIndexOf(" "));
+                    DateTime timestamp;
+                    if (DateTime.TryParse(dateTimeStr, out timestamp))
                     {
-                        logEntries[timestamp] = new LogEntry { Timestamp = timestamp };
+                        lastDate = timestamp;
+
+                        // Se ainda não tem uma entrada para essa data, cria uma nova
+                        if (!logEntries.ContainsKey(timestamp))
+                        {
+                            logEntries[timestamp] = new LogEntry { Timestamp = timestamp, Lines = new List<string>() };
+                        }
                     }
                 }
 
@@ -136,6 +163,8 @@ namespace ConsoleLog.Service
             return logEntries;
         }
         #endregion
+
+
         public static List<LogModel> ParseLogsFromString(string logData)
         {
             List<LogModel> logs = new List<LogModel>();
@@ -146,15 +175,15 @@ namespace ConsoleLog.Service
             foreach (var line in lines)
             {
                 // Expressão regular para extrair as partes do log
-                var logRegex = new Regex(@"\[(.*?)\s(.*?)\s(.*?)\]\s*(\w{3})\]\s*(.*)");
+                var logRegex = new Regex(@"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} -\d{2}:\d{2})\s+(\w{3})\]\s+(.*)");
                 var match = logRegex.Match(line);
 
                 if (match.Success)
                 {
                     // Extrai as partes do log usando os grupos capturados pela expressão regular
-                    var dateTimeStr = match.Groups[1].Value + " " + match.Groups[2].Value;
-                    var level = match.Groups[4].Value; // Nível do log (INF, ERR)
-                    var message = match.Groups[5].Value; // Mensagem do log
+                    var dateTimeStr = match.Groups[1].Value; 
+                    var level = match.Groups[2].Value; // Nível do log (INF, ERR)
+                    var message = match.Groups[3].Value; // Mensagem do log
 
                     // Tentativa de parse da data e hora do log
                     if (DateTime.TryParse(dateTimeStr, out DateTime horarioLog))

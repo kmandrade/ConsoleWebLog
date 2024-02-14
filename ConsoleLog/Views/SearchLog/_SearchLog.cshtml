@@ -31,15 +31,19 @@
                 <i class="fas fa-search"></i>
             </button>
         </form>
-        @foreach (var log in Model.ListLogs)
+        @if (Model.ListLogs != null && Model.ListLogs.Any())
         {
-            <div class="log-entry @(log.StatusCode == 200 ? "success" : "error")">
-                <span class="time">@log.HorarioLog.ToString("HH:mm dd/MM/yyyy")</span>
-                <span class="source">@log.Client</span>
-                <span class="message">@log.DescricaoLog</span>
-                <span style="cursor:pointer" class="search-icon"><i class="fas fa-search"></i></span> <!-- Ícone de pesquisa adicionado aqui -->
-            </div>
+            foreach (var log in Model.ListLogs)
+            {
+                <div class="log-entry @(log.StatusCode == 200 ? "success" : "error")">
+                    <span class="time">@log.HorarioLog.ToString("HH:mm dd/MM/yyyy")</span>
+                    <span class="source">@log.Client</span>
+                    <span class="message">@log.DescricaoLog</span>
+                    <span style="cursor:pointer" class="search-icon"><i class="fas fa-search"></i></span> <!-- Ícone de pesquisa adicionado aqui -->
+                </div>
+            }
         }
+        
 
     </div>
 </section>

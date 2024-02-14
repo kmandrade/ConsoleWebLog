@@ -36,15 +36,10 @@ namespace ConsoleLogMVC.Controllers
                 };
             }
 
-            var logs = new List<LogModel>
-            {
-                new LogModel { HorarioLog = DateTime.Now, Client = "adc-cliente", DescricaoLog = "Success", StatusCode = 200 }
-            };
-
             var viewModel = new LogsViewModel
             {
                 ListSistemas = sistemas,
-                ListLogs = logs
+                ListLogs = null
             };
 
             return View(viewModel);
@@ -71,6 +66,12 @@ namespace ConsoleLogMVC.Controllers
         }
         public IActionResult SelecionarSistema(string name, string path)
         {
+
+            return RedirectToAction("_SearchLog", new { path = path });
+
+        }
+        public IActionResult _SearchLog(string path)
+        {
             List<SistemasModel> sistemas = new List<SistemasModel>();
 
             string sistemasJson = HttpContext.Session.GetString("Sistemas");
@@ -83,14 +84,7 @@ namespace ConsoleLogMVC.Controllers
                 ListSistemas = sistemas,
                 ListLogs = ObterLogsSistema(path)
             };
-
-            
-            return View(viewModel);
-
-        }
-        public IActionResult ObterLog(string filterType, string filterValue)
-        {
-            return RedirectToAction("Index");
+            return View("~/Views/SearchLog/_SearchLog.cshtml", viewModel);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
