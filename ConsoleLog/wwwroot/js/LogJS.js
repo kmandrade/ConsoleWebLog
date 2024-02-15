@@ -1,5 +1,7 @@
 ﻿// LogsJS.js
 $(document).ready(function () {
+
+    
     // Verifica se algum sistema foi previamente selecionado e restaura esse estado
     let selectedSystem = localStorage.getItem('selectedSystem');
     if (selectedSystem) {
@@ -28,7 +30,7 @@ $(document).ready(function () {
         let caminhoArquivo = sistemaSelecionado ? sistemaSelecionado.CaminhoLogSistema : null;
 
 
-        $('.logs-container').empty();
+        //$('.logs-container').empty();
 
         // Faz uma chamada AJAX para atualizar a seleção no servidor
         $.ajax({
@@ -64,8 +66,7 @@ $(document).ready(function () {
             contentType: 'application/json',
             data: JSON.stringify(sistemas), // Certifique-se de que os dados estão corretamente formatados como JSON
             success: function (response) {
-                // O servidor pode simplesmente retornar um status de sucesso
-                // Não é necessário redirecionar aqui, pois estamos apenas processando os dados
+                
             },
             error: function (error) {
                 console.error('Erro ao enviar a lista de sistemas', error);
@@ -164,7 +165,7 @@ $(document).ready(function () {
         $('.lista-input').hide();
         $('#inputLog').prop('checked', false); // Resetar o estado do checkbox
     });
-
+    
 });
 
 //Função para obter  alista de sistemas existentes e renderizar a classe de lixeira para cada item

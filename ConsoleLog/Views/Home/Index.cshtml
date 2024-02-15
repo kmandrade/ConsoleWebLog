@@ -51,10 +51,33 @@
     <section class="section-grafico">
     </section>
 
-    @{
-        Html.RenderPartial("SearchLog",Model);
-    }
+<section class="section-logs" style="padding:1rem 0.5rem; margin: 1.5rem">
+    <div class="logs-sidebar">
+        <div class="sidebar-header">
+            <p style="align-items:center; font-size:20px; font-weight:bold;">Added Systems</p>
+        </div>
+        <ul class="systems-list">
+           
 
+            @foreach (var system in Model.ListSistemas)
+            {
+                <li class="system">
+                    @system.NomeSistema
+                    <button type="button" class="delete-system-button" data-system="@system.NomeSistema">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </li>
+            }
+        </ul>
+    </div>
+    <br />
+
+        @{
+            Html.RenderPartial("SearchLog", Model);
+        }
+
+</section>
+   
 
     <footer class="footer">
         <div class="container">

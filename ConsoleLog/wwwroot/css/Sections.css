@@ -1,10 +1,10 @@
 ﻿.section-logs {
     display: flex;
     font-family: 'Arial', sans-serif;
-    margin: 3.5rem;
-    padding: 10rem 1rem;
+    margin: 1.5rem !important;
+    padding: 2rem 0.5rem !important;
     /* A seção principal pode ocupar o restante do espaço */
-    height: 80vh; /* ou calc(100vh - altura do cabeçalho - altura do rodapé) */
+    height: 90vh; /* ou calc(100vh - altura do cabeçalho - altura do rodapé) */
     overflow: hidden; /* Impede rolagem nesta seção */
 }
 
@@ -12,7 +12,7 @@
     width: 17%; /* Ajuste a largura conforme necessário */
     background: #f2f2f2;
     padding: 10px;
-    height: 50vh; /* Altura máxima para a barra lateral */
+    height: 80vh; /* Altura máxima para a barra lateral */
     overflow-y: auto; /* Barra de rolagem vertical se necessário */
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -61,7 +61,7 @@
     flex-grow: 1;
     padding: 10px;
     background: white;
-    height: 50vh; /* Altura máxima para o contêiner de logs */
+    height: 80vh; /* Altura máxima para o contêiner de logs */
     overflow-y: auto; /* Barra de rolagem vertical se necessário */
     -webkit-appearance: none;
     -moz-appearance: none;
