@@ -76,21 +76,16 @@ namespace ConsoleLog.Service
         }
         public static string ObterInformacoesLog(string path)
         {
-
             StringBuilder informacoesLog = new StringBuilder();
-           
+
             try
             {
-                bool folderExists = Directory.Exists(path);
-                if (!folderExists)
+                if (!Directory.Exists(path))
                 {
                     throw new ArgumentNullException(nameof(path), "O caminho da pasta não existe.");
                 }
 
-                // Obtém todos os arquivos da pasta
                 var files = Directory.GetFiles(path);
-
-                // Ordena os arquivos por data de modificação, do mais recente para o mais antigo
                 var mostRecentFile = files.OrderByDescending(f => new FileInfo(f).LastWriteTime).FirstOrDefault();
 
                 if (string.IsNullOrEmpty(mostRecentFile))
@@ -98,29 +93,28 @@ namespace ConsoleLog.Service
                     throw new FileNotFoundException("Nenhum arquivo encontrado na pasta.");
                 }
 
-                var fileLines = File.ReadLines(mostRecentFile);
-                var logEntries = GetDateAllFile(fileLines);
-
-                // Buscar pela última ocorrência do termo no arquivo de logs
-                foreach (var entry in logEntries)
+                string currentGroup = string.Empty;
+                foreach (var line in File.ReadLines(mostRecentFile))
                 {
-
-                    foreach (var logLine in entry.Value.Lines)
+                    if (Regex.IsMatch(line, @"^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} -\d{2}:\d{2}\]"))
                     {
-                        informacoesLog.AppendLine(logLine);
-                        // Se chegar a uma nova data, para de imprimir
-                        if (Regex.IsMatch(logLine, @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}") && logLine != entry.Value.Lines[0])
+                        if (currentGroup != null)
                         {
-                            break;
+                            informacoesLog.AppendLine(); // Separador entre grupos
                         }
+                        currentGroup = line; // Inicia um novo grupo
                     }
-
+                    else if (currentGroup != null)
+                    {
+                        informacoesLog.AppendLine(line);
+                    }
                 }
+
                 return informacoesLog.ToString();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new ArgumentNullException(path);
+                throw new Exception($"Erro ao processar logs: {ex.Message}", ex);
             }
         }
         private static SortedDictionary<DateTime, LogEntry> GetDateAllFile(IEnumerable<string> file)
@@ -129,7 +123,7 @@ namespace ConsoleLog.Service
             DateTime lastDate = DateTime.MinValue;
 
             // Ajuste na expressão regular para incluir a fração de segundo e o fuso horário
-            var regexPattern = @"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} -\d{2}:\d{2})";
+            var regexPattern = @"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} [+-]\d{2}:\d{2})";
 
             foreach (var line in file)
             {
@@ -172,36 +166,53 @@ namespace ConsoleLog.Service
             // Dividindo as entradas de log por linhas
             var lines = logData.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
+            LogModel currentLog = null;
+            string currentLogContent = string.Empty;
+
             foreach (var line in lines)
             {
                 // Expressão regular para extrair as partes do log
-                var logRegex = new Regex(@"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} -\d{2}:\d{2})\s+(\w{3})\]\s+(.*)");
+                var logRegex = new Regex(@"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} -\d{2}:\d{2})\s+(\w{3})\]");
                 var match = logRegex.Match(line);
 
                 if (match.Success)
                 {
-                    // Extrai as partes do log usando os grupos capturados pela expressão regular
-                    var dateTimeStr = match.Groups[1].Value; 
+                    // Se já estivermos acumulando um log, adicioná-lo antes de começar um novo
+                    if (currentLog != null)
+                    {
+                        currentLog.DescricaoLog = currentLogContent.Trim();
+                        logs.Add(currentLog);
+                    }
+
+                    var dateTimeStr = match.Groups[1].Value;
                     var level = match.Groups[2].Value; // Nível do log (INF, ERR)
-                    var message = match.Groups[3].Value; // Mensagem do log
 
                     // Tentativa de parse da data e hora do log
                     if (DateTime.TryParse(dateTimeStr, out DateTime horarioLog))
                     {
-                        // Determina o status code baseado no nível do log
-                        int statusCode = level == "ERR" ? 400 : 200;
-
-                        var log = new LogModel
+                        // Inicia um novo log com a linha atual
+                        currentLog = new LogModel
                         {
                             HorarioLog = horarioLog,
                             Client = "", // O exemplo de log não inclui informações do cliente
-                            DescricaoLog = message,
-                            StatusCode = statusCode
+                            StatusCode = level == "ERR" ? 400 : 200
                         };
-
-                        logs.Add(log);
+                        // Reinicia o conteúdo do log atual, incluindo a linha atual
+                        currentLogContent = line.Substring(match.Length).Trim() + "\n";
                     }
                 }
+                else if (currentLog != null)
+                {
+                    // Se não for uma nova entrada de log, acumula a linha atual no log atual
+                    currentLogContent += line + "\n";
+                }
+            }
+
+            // Adiciona o último log acumulado se ele existir
+            if (currentLog != null)
+            {
+                currentLog.DescricaoLog = currentLogContent.Trim();
+                logs.Add(currentLog);
             }
 
             return logs;
