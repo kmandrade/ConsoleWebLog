@@ -162,57 +162,26 @@ namespace ConsoleLog.Service
         public static List<LogModel> ParseLogsFromString(string logData)
         {
             List<LogModel> logs = new List<LogModel>();
+            var logRegex = new Regex(@"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} -\d{2}:\d{2})\s+(\w{3})\](.*?)(?=\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} -\d{2}:\d{2}|$)", RegexOptions.Singleline);
 
-            // Dividindo as entradas de log por linhas
-            var lines = logData.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-            LogModel currentLog = null;
-            string currentLogContent = string.Empty;
-
-            foreach (var line in lines)
+            foreach (Match match in logRegex.Matches(logData))
             {
-                // Expressão regular para extrair as partes do log
-                var logRegex = new Regex(@"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} -\d{2}:\d{2})\s+(\w{3})\]");
-                var match = logRegex.Match(line);
+                var dateTimeStr = match.Groups[1].Value;
+                var level = match.Groups[2].Value; // Nível do log (INF, ERR)
+                var logContent = match.Groups[3].Value.Trim();
 
-                if (match.Success)
+                if (DateTime.TryParse(dateTimeStr, out DateTime horarioLog))
                 {
-                    // Se já estivermos acumulando um log, adicioná-lo antes de começar um novo
-                    if (currentLog != null)
+                    var log = new LogModel
                     {
-                        currentLog.DescricaoLog = currentLogContent.Trim();
-                        logs.Add(currentLog);
-                    }
+                        HorarioLog = horarioLog,
+                        Client = "", // O exemplo de log não inclui informações do cliente
+                        StatusCode = level == "ERR" ? 400 : 200,
+                        DescricaoLog = logContent
+                    };
 
-                    var dateTimeStr = match.Groups[1].Value;
-                    var level = match.Groups[2].Value; // Nível do log (INF, ERR)
-
-                    // Tentativa de parse da data e hora do log
-                    if (DateTime.TryParse(dateTimeStr, out DateTime horarioLog))
-                    {
-                        // Inicia um novo log com a linha atual
-                        currentLog = new LogModel
-                        {
-                            HorarioLog = horarioLog,
-                            Client = "", // O exemplo de log não inclui informações do cliente
-                            StatusCode = level == "ERR" ? 400 : 200
-                        };
-                        // Reinicia o conteúdo do log atual, incluindo a linha atual
-                        currentLogContent = line.Substring(match.Length).Trim() + "\n";
-                    }
+                    logs.Add(log);
                 }
-                else if (currentLog != null)
-                {
-                    // Se não for uma nova entrada de log, acumula a linha atual no log atual
-                    currentLogContent += line + "\n";
-                }
-            }
-
-            // Adiciona o último log acumulado se ele existir
-            if (currentLog != null)
-            {
-                currentLog.DescricaoLog = currentLogContent.Trim();
-                logs.Add(currentLog);
             }
 
             return logs;
