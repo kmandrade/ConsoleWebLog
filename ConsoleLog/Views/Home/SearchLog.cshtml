@@ -3,18 +3,20 @@
 
 
 <div class="logs-container">
-    <form id="filterForm" class="search-container">
-        <select id="filterType" class="filter-type">
+    @using (Html.BeginForm("SearchLog", "Home", FormMethod.Post, new { id = "filterForm", @class = "search-container" }))
+    {
+        <select id="filterType" name="filterType" class="filter-type">
             <option value="Status">Status</option>
             <option value="Descricao">Descrição</option>
             <option value="Date">Data</option>
-
         </select>
-        <input type="search" id="filterValue" placeholder="Digite o valor do filtro" class="search-input">
+        <input type="search" id="filterValue" name="filterValue" placeholder="Digite o valor do filtro" class="search-input">
         <button type="submit" class="filter-button">
             <i class="fas fa-search"></i>
         </button>
-    </form>
+    }
+
+
     @if (Model.ListLogs != null && Model.ListLogs.Any())
     {
 

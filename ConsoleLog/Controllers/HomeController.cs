@@ -44,8 +44,8 @@ namespace ConsoleLogMVC.Controllers
 
             return View(viewModel);
         }
-        
-        public IActionResult SearchLog(string name, string path)
+
+        public IActionResult SearchLog(string? name, string? path, string? filterType = null, string? filterValue = null)
         {
 
             List<SistemasModel> sistemas = new List<SistemasModel>();
@@ -60,26 +60,12 @@ namespace ConsoleLogMVC.Controllers
                 ListSistemas = sistemas,
                 ListLogs = ObterLogsSistema(path)
             };
-            ViewBag.MensagemDeBoasVindas = "Bem-vindo ao nosso site!";
 
             return PartialView(viewModel);
         }
-        public IActionResult _SearchLog(string path)
-        {
-            List<SistemasModel> sistemas = new List<SistemasModel>();
+        
 
-            string sistemasJson = HttpContext.Session.GetString("Sistemas");
-            if (!string.IsNullOrEmpty(sistemasJson))
-            {
-                sistemas = JsonConvert.DeserializeObject<List<SistemasModel>>(sistemasJson);
-            }
-            var viewModel = new LogsViewModel
-            {
-                ListSistemas = sistemas,
-                ListLogs = ObterLogsSistema(path)
-            };
-            return View("View", viewModel);
-        }
+
         /// <summary>
         /// Salva o caminho da pasta onde existe o log do sistema.
         /// </summary>
@@ -100,20 +86,8 @@ namespace ConsoleLogMVC.Controllers
             }
             return RedirectToAction("Index");
         }
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-        [HttpPost]
-        public IActionResult ProcessarSistemas([FromBody] List<SistemasModel> sistemas)
-        {
-            // Processar a lista de sistemas aqui (salvar na sessão ou no banco de dados)
-            HttpContext.Session.SetString("Sistemas", JsonConvert.SerializeObject(sistemas));
-
-            return RedirectToAction("Index");
-        }
-
+        
+      
         private static List<LogModel> ObterLogsSistema(string path)
         {
             string logsString = ConsoleLogService.ObterInformacoesLog(path);

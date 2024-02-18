@@ -13,12 +13,9 @@
     $('#saveButton').on('click', salvarSistema);
     $('#cancelButton').on('click', () => $('.lista-input').hide());
     $('#inputLog').change(() => $('.lista-input').toggle($('#inputLog').is(':checked')));
-    $('#filterForm').on('submit', filtrarLogs);
-    $('#filterValue').on('input', aplicarMascaraData).on('keydown', permitirExclusaoComBackspace);
 
 
-
-
+    
     $('#toggleLogsUpdate').click(function () {
         isUpdating = !isUpdating; // Inverte o estado de atualização
         if (isUpdating) {
@@ -33,7 +30,7 @@
 
     updateInterval = setInterval(atualizarLogs, defaultUpdateInterval);
     atualizarLogs(); // Chamada inicial
-    
+
 
 
     function marcarSistemaComoAtivo() {
@@ -95,21 +92,7 @@
             error: (error) => console.error('Erro ao atualizar logs', error)
         });
     }
-
-    function filtrarLogs(event) {
-        event.preventDefault();
-        let filterType = $('#filterType').val();
-        let filterValue = $('#filterValue').val();
-        // Implemente a lógica de filtragem conforme necessário
-    }
-
-    function aplicarMascaraData() {
-        // Implemente a máscara de data conforme necessário
-    }
-
-    function permitirExclusaoComBackspace(e) {
-        // Implemente a lógica para permitir a exclusão com backspace
-    }
+    
 
     function atualizarListaSistemas() {
         $('.systems-list').empty();
