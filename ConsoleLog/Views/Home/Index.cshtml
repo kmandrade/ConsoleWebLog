@@ -48,8 +48,13 @@
         </div>
     </header>
 
-    <section class="section-grafico">
+    <section class="section-information" style="text-align: right; padding-right: 1rem;">
+        <button id="toggleLogsUpdate" class="toggle-logs-update">
+            <i class="fas fa-play"></i>
+            <p>Ativar Visualização em Tempo Real</p>
+        </button>
     </section>
+
 
 <section class="section-logs" style="padding:1rem 0.5rem; margin: 1.5rem">
     <div class="logs-sidebar">
@@ -64,8 +69,9 @@
                 <li class="system">
                     @system.NomeSistema
                     <button type="button" class="delete-system-button" data-system="@system.NomeSistema">
-                        <i class="fas fa-trash"></i>
                     </button>
+                        <i class="fas fa-trash"></i>
+
                 </li>
             }
         </ul>

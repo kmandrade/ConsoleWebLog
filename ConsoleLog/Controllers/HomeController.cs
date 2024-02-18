@@ -114,7 +114,7 @@ namespace ConsoleLogMVC.Controllers
             return RedirectToAction("Index");
         }
 
-        private List<LogModel> ObterLogsSistema(string path)
+        private static List<LogModel> ObterLogsSistema(string path)
         {
             string logsString = ConsoleLogService.ObterInformacoesLog(path);
             List<LogModel> logs = ConsoleLogService.ParseLogsFromString(logsString);
