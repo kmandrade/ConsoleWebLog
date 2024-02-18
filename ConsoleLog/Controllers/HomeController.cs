@@ -63,7 +63,7 @@ namespace ConsoleLogMVC.Controllers
 
             return PartialView(viewModel);
         }
-        
+
 
 
         /// <summary>
@@ -86,8 +86,8 @@ namespace ConsoleLogMVC.Controllers
             }
             return RedirectToAction("Index");
         }
-        
-      
+
+
         private static List<LogModel> ObterLogsSistema(string path)
         {
             string logsString = ConsoleLogService.ObterInformacoesLog(path);

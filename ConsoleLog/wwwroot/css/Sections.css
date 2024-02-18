@@ -1,8 +1,8 @@
 ﻿.section-logs {
     display: flex;
     font-family: 'Arial', sans-serif;
-    margin: 1.5rem !important;
-    padding: 2rem 0.5rem !important;
+    margin: 0.5rem !important;
+    padding: 1rem 0.5rem !important;
     /* A seção principal pode ocupar o restante do espaço */
     height: 90vh; /* ou calc(100vh - altura do cabeçalho - altura do rodapé) */
     overflow: hidden; /* Impede rolagem nesta seção */
