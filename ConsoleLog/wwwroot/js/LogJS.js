@@ -4,7 +4,6 @@
     let sistemas = JSON.parse(localStorage.getItem('sistemas') || '[]');
     let isUpdating = false;
     let updateInterval = setInterval(atualizarLogs, defaultUpdateInterval);
-    let selecioneSistemaUrl = '@Url.Action("SearchLog", "Home")';
 
     inicializar();
 
@@ -66,7 +65,9 @@
     function atualizarLogs() {
         let selectedSystem = localStorage.getItem('selectedSystem');
         let sistemaSelecionado = sistemas.find(sistema => sistema.NomeSistema === selectedSystem);
-        
+        console.log("teste");
+
+        console.log(sistemaSelecionado.CaminhoLogSistema);
         if (sistemaSelecionado) {
             $.ajax({
                 url: selecioneSistemaUrl,
