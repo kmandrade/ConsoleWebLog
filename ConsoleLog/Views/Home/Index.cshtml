@@ -1,5 +1,8 @@
 ﻿@using ConsoleLog.Models
 @model LogsViewModel
+@{
+    Layout = null;
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,11 +10,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - WebUI</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="~/css/Style.css" />
+    <link rel="stylesheet" href="~/css/Style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Header.css" />
     <link rel="stylesheet" href="~/css/Footer.css" />
     <link rel="stylesheet" href="~/css/Sections.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +29,7 @@
 <body>
     <header class="cabecalho">
         <div class="container">
-            <p class="titulo-header">Log System</p>
+            <p class="titulo-header">DetetiveLog</p>
         </div>
         <div class="container container-separador">
         </div>
@@ -63,17 +67,20 @@
         </div>
         <ul class="systems-list">
            
+                @if (Model.ListSistemas.Any())
+                {
+                    @foreach (var system in Model.ListSistemas)
+                    {
+                        <li class="system">
+                            @system.NomeSistema
+                            <button type="button" class="delete-system-button" data-system="@system.NomeSistema">
+                            </button>
+                            <i class="fas fa-trash"></i>
 
-            @foreach (var system in Model.ListSistemas)
-            {
-                <li class="system">
-                    @system.NomeSistema
-                    <button type="button" class="delete-system-button" data-system="@system.NomeSistema">
-                    </button>
-                        <i class="fas fa-trash"></i>
-
-                </li>
-            }
+                        </li>
+                    }
+                }
+            
         </ul>
     </div>
     <br />
@@ -83,7 +90,6 @@
         }
 
 </section>
-   
 
     <footer class="footer">
         <div class="container">
@@ -91,7 +97,9 @@
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 
     <script type="text/javascript">
         var selecioneSistemaUrl = '@Url.Action("SearchLog", "Home")';
@@ -99,6 +107,7 @@
         
     </script>
     <script src="~/js/LogJS.js" ></script>
+    @await Component.InvokeAsync("Notyf")
 
 </body>
 </html>

@@ -65,6 +65,9 @@
     function atualizarLogs() {
         let selectedSystem = localStorage.getItem('selectedSystem');
         let sistemaSelecionado = sistemas.find(sistema => sistema.NomeSistema === selectedSystem);
+        console.log("teste");
+
+        console.log(sistemaSelecionado.CaminhoLogSistema);
         if (sistemaSelecionado) {
             $.ajax({
                 url: selecioneSistemaUrl,

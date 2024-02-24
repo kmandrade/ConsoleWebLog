@@ -3,16 +3,18 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using ConsoleLog.Service;
 using Newtonsoft.Json;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace ConsoleLogMVC.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly INotyfService _notyfService;
+        public HomeController(ILogger<HomeController> logger, INotyfService notyfService)
         {
             _logger = logger;
+            _notyfService = notyfService;
         }
         public IActionResult Index()
         {
@@ -35,19 +37,22 @@ namespace ConsoleLogMVC.Controllers
                     }
                 };
             }
-
+            _notyfService.Success("Sucess");
             var viewModel = new LogsViewModel
             {
                 ListSistemas = sistemas,
                 ListLogs = null
             };
-
             return View(viewModel);
         }
 
         public IActionResult SearchLog(string? name, string? path, string? filterType = null, string? filterValue = null)
         {
-
+            if(filterType == "Status" && (filterValue != "200" || filterValue != "400"))
+            {
+                _notyfService.Warning("Tipo de filtro inválido.");
+                return RedirectToAction("Index");
+            }
             List<SistemasModel> sistemas = new List<SistemasModel>();
 
             string sistemasJson = HttpContext.Session.GetString("Sistemas");
@@ -60,6 +65,7 @@ namespace ConsoleLogMVC.Controllers
                 ListSistemas = sistemas,
                 ListLogs = ObterLogsSistema(path)
             };
+            _notyfService.Success("Sucess");
 
             return PartialView(viewModel);
         }

@@ -1,7 +1,16 @@
+using AspNetCoreHero.ToastNotification;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddNotyf(config =>
+{
+    config.DurationInSeconds = 5;
+    config.IsDismissable = true;
+    config.Position = NotyfPosition.TopRight;
+});
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddSession(options =>
 {
     // Define um timeout razoável para a sessão
