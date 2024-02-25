@@ -47,9 +47,15 @@ namespace ConsoleLogMVC.Controllers
 
             return View(viewModel);
         }
-
+        [HttpPost]
+        public IActionResult SetSelectedSystemPath(string path)
+        {
+            HttpContext.Session.SetString("SelectedSystemPath", path);
+            return Ok();
+        }
         public IActionResult SearchLog(string? name, string? path, string? filterType = null, string? filterValue = null)
         {
+            var path2 = HttpContext.Session.GetString("SelectedSystemPath");
             if (string.IsNullOrEmpty(path))
             {
                 _notyfService.Error("Erro");
