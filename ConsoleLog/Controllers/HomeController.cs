@@ -37,7 +37,8 @@ namespace ConsoleLogMVC.Controllers
                     }
                 };
             }
-            _notyfService.Success("Sucess");
+            _notyfService.Success("teste");
+            _notyfService.Information("information");
             var viewModel = new LogsViewModel
             {
                 ListSistemas = sistemas,
@@ -45,13 +46,19 @@ namespace ConsoleLogMVC.Controllers
             };
             return View(viewModel);
         }
-
+        [HttpPost]
+        public IActionResult SetSelectedSystemPath(string path)
+        {
+            HttpContext.Session.SetString("SelectedSystemPath", path);
+            return Ok();
+        }
         public IActionResult SearchLog(string? name, string? path, string? filterType = null, string? filterValue = null)
         {
-            if(filterType == "Status" && (filterValue != "200" || filterValue != "400"))
+            var path2 = HttpContext.Session.GetString("SelectedSystemPath");
+            if (string.IsNullOrEmpty(path))
             {
-                _notyfService.Warning("Tipo de filtro inválido.");
-                return RedirectToAction("Index");
+                _notyfService.Error("Erro");
+                return Redirect("Index");
             }
             List<SistemasModel> sistemas = new List<SistemasModel>();
 

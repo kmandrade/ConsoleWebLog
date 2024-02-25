@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    const defaultUpdateInterval = 60000; // 60 segundos como padrão
+    const defaultUpdateInterval = 600000; // 60 segundos como padrão
     const fastUpdateInterval = 2000; // 2 segundos para atualização rápida
     let sistemas = JSON.parse(localStorage.getItem('sistemas') || '[]');
     let isUpdating = false;
@@ -69,9 +69,28 @@
     function selecionarSistema() {
         $('.system').removeClass('active');
         $(this).addClass('active');
-        localStorage.setItem('selectedSystem', $(this).text().trim());
-        atualizarLogs();
+        let selectedSystemName = $(this).text().trim();
+        localStorage.setItem('selectedSystem', selectedSystemName);
+
+        let sistemaSelecionado = sistemas.find(s => s.NomeSistema === selectedSystemName);
+        if (sistemaSelecionado) {
+            // Chamada AJAX para salvar o path do sistema selecionado na sessão do lado do servidor
+            $.ajax({
+                url: '/Home/SetSelectedSystemPath', // A URL da sua action no controlador
+                method: 'POST',
+                data: { path: sistemaSelecionado.CaminhoLogSistema }, // Envia o path como dado
+                success: function (response) {
+                    console.log("Path do sistema selecionado salvo na sessão.");
+                    // Após salvar com sucesso, atualiza os logs
+                    atualizarLogs();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Erro ao salvar o path do sistema selecionado na sessão.", error);
+                }
+            });
+        }
     }
+
 
     function salvarSistema() {
         let nomeSistema = $('#nomeSistema').val().trim();
@@ -94,20 +113,38 @@
         atualizarListaSistemas();
     }
 
-    function atualizarLogs() {
+    async function atualizarLogs() {
         let selectedSystem = localStorage.getItem('selectedSystem');
-        let sistemaSelecionado = sistemas.find(sistema => sistema.NomeSistema === selectedSystem);
+        let sistemaSelecionado = sistemas.find(s => s.NomeSistema === selectedSystem);
 
         if (sistemaSelecionado) {
-            $.ajax({
-                url: selecioneSistemaUrl,
-                type: 'POST',
-                data: { name: sistemaSelecionado.NomeSistema, path: sistemaSelecionado.CaminhoLogSistema },
-                success: (response) => $('.logs-container').html(response),
-                error: (error) => console.error('Erro ao atualizar logs', error)
-            });
+            try {
+                // Primeiro, salvar o path na sessão do lado do servidor
+                await $.ajax({
+                    url: '/Home/SetSelectedSystemPath',
+                    method: 'POST',
+                    data: { path: sistemaSelecionado.CaminhoLogSistema }
+                });
+                console.log("Path do sistema selecionado salvo na sessão.");
+
+                // Após salvar com sucesso, continua com a atualização dos logs
+                const response = await $.ajax({
+                    url: '/Home/SearchLog',
+                    type: 'POST',
+                    data: {
+                        filterType: $('#filterType').val(),
+                        filterValue: $('#filterValue').val(),
+                        path: sistemaSelecionado.CaminhoLogSistema
+                    }
+                });
+                $('.logs-container').html(response);
+            } catch (error) {
+                console.error("Erro ao tentar atualizar os logs", error);
+            }
         }
     }
+
+
 
     function toggleAtualizacaoLogs() {
         isUpdating = !isUpdating;
