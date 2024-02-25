@@ -53,9 +53,9 @@ namespace ConsoleLogMVC.Controllers
             HttpContext.Session.SetString("SelectedSystemPath", path);
             return Ok();
         }
-        public IActionResult SearchLog(string? name, string? path, string? filterType = null, string? filterValue = null)
+        public IActionResult SearchLog(string? filterType = null, string? filterValue = null)
         {
-            var path2 = HttpContext.Session.GetString("SelectedSystemPath");
+            var path = HttpContext.Session.GetString("SelectedSystemPath");
             if (string.IsNullOrEmpty(path))
             {
                 _notyfService.Error("Erro");
@@ -71,7 +71,7 @@ namespace ConsoleLogMVC.Controllers
             var viewModel = new LogsViewModel
             {
                 ListSistemas = sistemas,
-                ListLogs = ObterLogsSistema(path)
+                ListLogs = ObterLogsSistema(path,filterType,filterValue)
             };
 
             return PartialView(viewModel);
@@ -101,10 +101,19 @@ namespace ConsoleLogMVC.Controllers
         }
 
 
-        private static List<LogModel> ObterLogsSistema(string path)
+        private static List<LogModel> ObterLogsSistema(string path, string? filterType = null, string? filterValue = null)
         {
             string logsString = ConsoleLogService.ObterInformacoesLog(path);
             List<LogModel> logs = ConsoleLogService.ParseLogsFromString(logsString);
+            if(!string.IsNullOrWhiteSpace(filterType) && !string.IsNullOrWhiteSpace(filterValue))
+            {
+                if (filterType == "Status")
+                {
+                    return logs
+                    .FindAll(l => l.StatusCode == Convert.ToInt32(filterValue));
+                }
+                
+            }
             return logs;
         }
 
