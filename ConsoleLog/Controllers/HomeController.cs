@@ -47,21 +47,25 @@ namespace ConsoleLogMVC.Controllers
 
             return View(viewModel);
         }
-        [HttpPost]
-        public IActionResult SetSelectedSystemPath(string path)
+        
+        public IActionResult SearchLog(string? path = null,string? filterType = null, string? filterValue = null)
         {
-            HttpContext.Session.SetString("SelectedSystemPath", path);
-            return Ok();
-        }
-        public IActionResult SearchLog(string? filterType = null, string? filterValue = null)
-        {
-            var path = HttpContext.Session.GetString("SelectedSystemPath");
-            if (string.IsNullOrEmpty(path))
+
+            if (!string.IsNullOrEmpty(path))
             {
-                _notyfService.Error("Erro");
-                return Redirect("Index");
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("SelectedSystemPath")))
+                {
+                    HttpContext.Session.SetString("SelectedSystemPath", path);
+                }
+                var viewMode2l = new LogsViewModel
+                {
+                    ListSistemas = new List<SistemasModel>(),
+                    ListLogs = ObterLogsSistema(path, filterType, filterValue)
+                };
+                return PartialView(viewMode2l);
             }
-            List<SistemasModel> sistemas = new List<SistemasModel>();
+            var caminho = HttpContext.Session.GetString("SelectedSystemPath");
+            List <SistemasModel> sistemas = new List<SistemasModel>();
 
             string sistemasJson = HttpContext.Session.GetString("Sistemas");
             if (!string.IsNullOrEmpty(sistemasJson))
@@ -71,10 +75,10 @@ namespace ConsoleLogMVC.Controllers
             var viewModel = new LogsViewModel
             {
                 ListSistemas = sistemas,
-                ListLogs = ObterLogsSistema(path,filterType,filterValue)
+                ListLogs = ObterLogsSistema(caminho, filterType,filterValue)
             };
 
-            return PartialView(viewModel);
+            return View("Index", viewModel);
         }
 
 

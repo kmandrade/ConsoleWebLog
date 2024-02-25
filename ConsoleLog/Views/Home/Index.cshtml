@@ -78,9 +78,9 @@
     </div>
     <br />
 
-        @{
-            Html.RenderPartial("SearchLog", Model);
-        }
+        <div class="logs-container">
+            @Html.Partial("SearchLog", Model)
+        </div>
 
 </section>
    
