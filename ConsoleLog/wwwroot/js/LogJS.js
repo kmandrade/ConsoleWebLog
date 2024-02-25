@@ -4,6 +4,7 @@
     let sistemas = JSON.parse(localStorage.getItem('sistemas') || '[]');
     let isUpdating = false;
     let updateInterval = setInterval(atualizarLogs, defaultUpdateInterval);
+    let isInitialLoad = true; // Adiciona uma flag para controlar o carregamento inicial
 
     inicializar();
 
@@ -11,7 +12,7 @@
         atualizarListaSistemas();
         marcarSistemaComoAtivo();
         configurarEventos();
-        selecionarSistema();
+       
     }
 
     function configurarEventos() {
@@ -21,7 +22,15 @@
         $('#cancelButton').on('click', () => $('.lista-input').hide());
         $('#inputLog').change(() => $('.lista-input').toggle($('#inputLog').is(':checked')));
         $('#toggleLogsUpdate').click(toggleAtualizacaoLogs);
-        
+
+        $('#filterForm').submit(function (e) {
+            e.preventDefault(); // Previne a submissão tradicional do formulário
+            let path = sistemas.find(s => s.NomeSistema === localStorage.getItem('selectedSystem'))?.CaminhoLogSistema;
+            if (path) {
+                isInitialLoad = false; // Atualiza a flag para indicar que não é mais o carregamento inicial
+                atualizarLogs(path);
+            }
+        });
     }
 
     function marcarSistemaComoAtivo() {
@@ -35,29 +44,35 @@
         }
     }
 
-    function selecionarSistema() {
+    function selecionarSistema(event) {
         $('.system').removeClass('active');
-        $(this).addClass('active');
-        let selectedSystemName = $(this).text().trim();
+        let selectedElement = $(event.currentTarget);
+        selectedElement.addClass('active');
+        let selectedSystemName = selectedElement.text().trim();
         localStorage.setItem('selectedSystem', selectedSystemName);
 
         let sistemaSelecionado = sistemas.find(s => s.NomeSistema === selectedSystemName);
         if (sistemaSelecionado) {
-            // Chamada AJAX para salvar o path do sistema selecionado na sessão do lado do servidor
-            $.ajax({
-                url: '/Home/SearchLog',
-                method: 'POST',
-                data: { path: sistemaSelecionado.CaminhoLogSistema },
-                success: function (response) {
-                    // Após salvar com sucesso, atualiza os logs
-                    atualizarLogs();
-                },
-                error: function (xhr, status, error) {
-                    console.error("Erro ao salvar o path do sistema selecionado na sessão.", error);
-                }
-            });
+            atualizarLogs(sistemaSelecionado.CaminhoLogSistema);
         }
-        
+    }
+
+    function atualizarLogs(path) {
+        $.ajax({
+            url: '/Home/SearchLog',
+            type: 'POST',
+            data: {
+                filterType: $('#filterType').val(),
+                filterValue: $('#filterValue').val(),
+                path: path
+            },
+            success: function (data) {
+                $('.logs-container').html(data);
+            },
+            error: function (xhr, status, error) {
+                console.error("Erro ao atualizar logs: ", error);
+            }
+        });
     }
 
 
@@ -82,32 +97,7 @@
         atualizarListaSistemas();
     }
 
-
-    function atualizarLogs() {
-        let selectedSystem = localStorage.getItem('selectedSystem');
-        let sistemaSelecionado = sistemas.find(s => s.NomeSistema === selectedSystem);
-
-        if (sistemaSelecionado) {
-            $.ajax({
-                url: '/Home/SearchLog',
-                type: 'POST',
-                data: {
-                    filterType: $('#filterType').val(),
-                    filterValue: $('#filterValue').val(),
-                    path: sistemaSelecionado.CaminhoLogSistema
-                },
-                success: function (data) {
-                    $('.logs-container').html(data); // Garanta que '.logs-container' está correto
-                },
-                error: function (xhr, status, error) {
-                    console.error("Erro ao atualizar logs: ", error);
-                }
-            });
-        }
-        
-    }
-
-
+    
 
 
     function toggleAtualizacaoLogs() {
