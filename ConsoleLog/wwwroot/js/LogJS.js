@@ -21,40 +21,8 @@
         $('#cancelButton').on('click', () => $('.lista-input').hide());
         $('#inputLog').change(() => $('.lista-input').toggle($('#inputLog').is(':checked')));
         $('#toggleLogsUpdate').click(toggleAtualizacaoLogs);
-        $('#searchButton').on('click', realizarBuscaAjax);
-
-        //Captura o evento de pressionar Enter em qualquer lugar do formulário
-        $(document).on('keypress', function (e) {
-            if (e.which == 13 && $(e.target).closest("#filterForm").length) { // Verifica se a tecla Enter foi pressionada dentro do #filterForm
-                e.preventDefault(); // Impede o comportamento padrão
-                realizarBuscaAjax();
-            }
-        });
     }
-    function realizarBuscaAjax() {
-        let selectedSystem = localStorage.getItem('selectedSystem');
-        let sistemaSelecionado = sistemas.find(s => s.NomeSistema === selectedSystem);
-        let path = sistemaSelecionado ? sistemaSelecionado.CaminhoLogSistema : '';
-        let filterType = $('#filterType').val();
-        let filterValue = $('#filterValue').val();
 
-        $.ajax({
-            url: '/Home/SearchLog',
-            method: 'POST',
-            data: {
-                name: selectedSystem,
-                path: path,
-                filterType: filterType,
-                filterValue: filterValue
-            },
-            success: function (data) {
-                $('.logs-container').html(data);
-            },
-            error: function (xhr, status, error) {
-                console.error("Erro ao buscar logs:", error);
-            }
-        });
-    }
     function marcarSistemaComoAtivo() {
         let selectedSystem = localStorage.getItem('selectedSystem');
         if (selectedSystem) {

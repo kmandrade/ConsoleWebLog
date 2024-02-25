@@ -3,17 +3,18 @@
 
 
 <div class="logs-container">
-    <div class="search-container" id="filterForm">
+    @using (Html.BeginForm("SearchLog", "Home", FormMethod.Post, new { id = "filterForm", @class = "search-container" }))
+    {
         <select id="filterType" name="filterType" class="filter-type">
             <option value="Status">Status</option>
             <option value="Descricao">Descrição</option>
             <option value="Date">Data</option>
         </select>
         <input type="search" id="filterValue" name="filterValue" placeholder="Digite o valor do filtro" class="search-input">
-        <button type="button" id="searchButton" class="filter-button">
+        <button type="submit" class="filter-button">
             <i class="fas fa-search"></i>
         </button>
-    </div>
+    }
 
 
     @if (Model.ListLogs != null && Model.ListLogs.Any())
@@ -32,5 +33,3 @@
 
 
 </div>
-
-@await Component.InvokeAsync("Notyf")
