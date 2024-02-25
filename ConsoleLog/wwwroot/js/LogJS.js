@@ -4,13 +4,12 @@
     let sistemas = JSON.parse(localStorage.getItem('sistemas') || '[]');
     let isUpdating = false;
     let updateInterval = setInterval(atualizarLogs, defaultUpdateInterval);
-    let isInitialLoad = true; // Adiciona uma flag para controlar o carregamento inicial
+    let pathAtualSistema = ""; // Variável global para armazenar o path do sistema selecionado
 
     inicializar();
 
     function inicializar() {
         atualizarListaSistemas();
-        marcarSistemaComoAtivo();
         configurarEventos();
        
     }
@@ -26,13 +25,15 @@
         $('#filterForm').submit(function (e) {
             e.preventDefault(); // Previne a submissão tradicional do formulário
             let path = sistemas.find(s => s.NomeSistema === localStorage.getItem('selectedSystem'))?.CaminhoLogSistema;
-            if (path) {
-                isInitialLoad = false; // Atualiza a flag para indicar que não é mais o carregamento inicial
-                atualizarLogs(path);
+            if (!path) {
+                alert("Por favor, selecione um sistema antes de usar o filtro.");
+                return;
             }
+            atualizarLogs(path);
         });
     }
 
+    
     function marcarSistemaComoAtivo() {
         let selectedSystem = localStorage.getItem('selectedSystem');
         if (selectedSystem) {
@@ -53,11 +54,20 @@
 
         let sistemaSelecionado = sistemas.find(s => s.NomeSistema === selectedSystemName);
         if (sistemaSelecionado) {
-            atualizarLogs(sistemaSelecionado.CaminhoLogSistema);
+            pathAtualSistema = sistemaSelecionado.CaminhoLogSistema; // Atualiza a variável global com o path do sistema selecionado
+            atualizarLogs(pathAtualSistema);
         }
     }
 
     function atualizarLogs(path) {
+        // Se nenhum path for fornecido, usa o path da variável global
+        path = path || pathAtualSistema;
+
+        if (!path) {
+            console.error("Nenhum sistema selecionado para atualizar logs.");
+            return; // Sai da função se nenhum sistema estiver selecionado
+        }
+
         $.ajax({
             url: '/Home/SearchLog',
             type: 'POST',
@@ -105,7 +115,11 @@
         $(this).toggleClass('active');
         $(this).find('i').toggleClass('fa-play fa-pause');
         clearInterval(updateInterval);
-        updateInterval = setInterval(atualizarLogs, isUpdating ? fastUpdateInterval : defaultUpdateInterval);
+
+        if (isUpdating) {
+            // Reinicia o temporizador sem passar um path específico, já que atualizarLogs vai buscar o path da variável global
+            updateInterval = setInterval(atualizarLogs, fastUpdateInterval);
+        }
     }
 
     function atualizarListaSistemas() {
