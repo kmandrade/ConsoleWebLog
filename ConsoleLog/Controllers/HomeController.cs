@@ -4,6 +4,7 @@ using System.Diagnostics;
 using ConsoleLog.Service;
 using Newtonsoft.Json;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using System.IO;
 
 namespace ConsoleLogMVC.Controllers
 {
@@ -18,69 +19,61 @@ namespace ConsoleLogMVC.Controllers
         }
         public IActionResult Index()
         {
-            // Recuperar os dados da sessão ou outra forma de armazenamento persistente
-            List<SistemasModel> sistemas = new List<SistemasModel>();
-
-            // Tentar recuperar a lista de sistemas da sessão
-            string sistemasJson = HttpContext.Session.GetString("Sistemas");
-            if (!string.IsNullOrEmpty(sistemasJson))
+            var viewModel = new LogsViewModel();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("SelectedSystemPath")))
             {
-                sistemas = JsonConvert.DeserializeObject<List<SistemasModel>>(sistemasJson);
-            }
-            if (sistemas == null)
-            {
-                sistemas = new List<SistemasModel>()
+                viewModel = new LogsViewModel
                 {
-                    new SistemasModel()
-                    {
-                        NomeSistema = "All", CaminhoLogSistema = "caminho"
-                    }
+                    ListSistemas = new List<SistemasModel>(),
+                    ListLogs = ObterLogsSistema(HttpContext.Session.GetString("SelectedSystemPath"))
                 };
             }
-            _notyfService.Success("teste");
-            _notyfService.Information("information");
-            var viewModel = new LogsViewModel
-            {
-                ListSistemas = sistemas,
-                ListLogs = null
-            };
+
 
             return View(viewModel);
         }
-        
-        public IActionResult SearchLog(string? path = null,string? filterType = null, string? filterValue = null)
-        {
 
-            if (!string.IsNullOrEmpty(path))
+        public IActionResult SearchLog(string? path = null, string? filterType = null, string? filterValue = null)
+        {
+            string sistemasJson = HttpContext.Session.GetString("Sistemas");
+
+            if (!string.IsNullOrEmpty(path) && string.IsNullOrEmpty(HttpContext.Session.GetString("SelectedSystemPath")))
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("SelectedSystemPath")))
-                {
-                    HttpContext.Session.SetString("SelectedSystemPath", path);
-                }
-                var viewMode2l = new LogsViewModel
-                {
-                    ListSistemas = new List<SistemasModel>(),
-                    ListLogs = ObterLogsSistema(path, filterType, filterValue)
-                };
-                return PartialView(viewMode2l);
+
+                HttpContext.Session.SetString("SelectedSystemPath", path);
+
             }
             var caminho = HttpContext.Session.GetString("SelectedSystemPath");
-            List <SistemasModel> sistemas = new List<SistemasModel>();
 
-            string sistemasJson = HttpContext.Session.GetString("Sistemas");
+            var (model, valido) = ValidarFiltroLog(filterType, filterValue, caminho, sistemasJson);
+            if (valido)
+                return PartialView(model);
+            else
+                _notyfService.Error("Status invalido");
+                return View("Index",model);
+        }
+        private static (LogsViewModel model, bool valido) ValidarFiltroLog(string filterType, string filterValue,
+            string path, string sistemasJson)
+        {
+            List<SistemasModel> sistemas = new List<SistemasModel>();
+
             if (!string.IsNullOrEmpty(sistemasJson))
             {
                 sistemas = JsonConvert.DeserializeObject<List<SistemasModel>>(sistemasJson);
             }
             var viewModel = new LogsViewModel
             {
-                ListSistemas = sistemas,
-                ListLogs = ObterLogsSistema(caminho, filterType,filterValue)
+                ListSistemas = sistemas
             };
-
-            return View("Index", viewModel);
+            if (!string.IsNullOrWhiteSpace(filterType) && !string.IsNullOrWhiteSpace(filterValue)
+                && filterType == "Status" && (filterValue != "200" && filterValue != "400"))
+            {
+                viewModel.ListLogs = ObterLogsSistema(path);
+                return (viewModel, false);
+            }
+            viewModel.ListLogs = ObterLogsSistema(path, filterType, filterValue);
+            return (viewModel, true);
         }
-
 
 
         /// <summary>
@@ -109,14 +102,14 @@ namespace ConsoleLogMVC.Controllers
         {
             string logsString = ConsoleLogService.ObterInformacoesLog(path);
             List<LogModel> logs = ConsoleLogService.ParseLogsFromString(logsString);
-            if(!string.IsNullOrWhiteSpace(filterType) && !string.IsNullOrWhiteSpace(filterValue))
+            if (!string.IsNullOrWhiteSpace(filterType) && !string.IsNullOrWhiteSpace(filterValue))
             {
                 if (filterType == "Status")
                 {
                     return logs
                     .FindAll(l => l.StatusCode == Convert.ToInt32(filterValue));
                 }
-                
+
             }
             return logs;
         }

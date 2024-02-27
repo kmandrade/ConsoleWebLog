@@ -9,11 +9,15 @@
     inicializar();
 
     function inicializar() {
+        limparFiltros(); 
         atualizarListaSistemas();
         configurarEventos();
        
     }
-
+    function limparFiltros() {
+        $('#filterType').val('Status'); 
+        $('#filterValue').val(''); 
+    }
     function configurarEventos() {
         $('.systems-list').on('click', '.system', selecionarSistema);
         $('.systems-list').on('click', '.delete-system-button', deletarSistema);
@@ -22,7 +26,8 @@
         $('#inputLog').change(() => $('.lista-input').toggle($('#inputLog').is(':checked')));
         $('#toggleLogsUpdate').click(toggleAtualizacaoLogs);
 
-        $('#filterForm').submit(function (e) {
+        // Modificando a forma como o event handler de submissão do formulário é aplicado
+        $(document).on('submit', '#filterForm', function (e) {
             e.preventDefault(); // Previne a submissão tradicional do formulário
             let path = sistemas.find(s => s.NomeSistema === localStorage.getItem('selectedSystem'))?.CaminhoLogSistema;
             if (!path) {
@@ -32,6 +37,7 @@
             atualizarLogs(path);
         });
     }
+
 
     
     function marcarSistemaComoAtivo() {

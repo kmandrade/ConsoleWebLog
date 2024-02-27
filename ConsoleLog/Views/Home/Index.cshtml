@@ -56,34 +56,37 @@
     </section>
 
 
-<section class="section-logs" style="padding:1rem 0.5rem; margin: 1.5rem">
-    <div class="logs-sidebar">
-        <div class="sidebar-header">
-            <p style="align-items:center; font-size:20px; font-weight:bold;">Added Systems</p>
+    <section class="section-logs" style="padding:1rem 0.5rem; margin: 1.5rem">
+        <div class="logs-sidebar">
+            <div class="sidebar-header">
+                <p style="align-items:center; font-size:20px; font-weight:bold;">Added Systems</p>
+            </div>
+            <ul class="systems-list">
+
+                @if (Model.ListSistemas != null && Model.ListSistemas.Any())
+                {
+                    foreach (var system in Model.ListSistemas)
+                    {
+                        <li class="system">
+                            @system.NomeSistema
+                            <button type="button" class="delete-system-button" data-system="@system.NomeSistema">
+                            </button>
+                            <i class="fas fa-trash"></i>
+
+                        </li>
+                    }
+                }
+
+            </ul>
         </div>
-        <ul class="systems-list">
-           
-
-            @foreach (var system in Model.ListSistemas)
-            {
-                <li class="system">
-                    @system.NomeSistema
-                    <button type="button" class="delete-system-button" data-system="@system.NomeSistema">
-                    </button>
-                        <i class="fas fa-trash"></i>
-
-                </li>
-            }
-        </ul>
-    </div>
-    <br />
+        <br />
 
         <div class="logs-container">
             @Html.Partial("SearchLog", Model)
         </div>
 
-</section>
-   
+    </section>
+
 
     <footer class="footer">
         <div class="container">
@@ -96,9 +99,9 @@
     <script type="text/javascript">
         var selecioneSistemaUrl = '@Url.Action("SearchLog", "Home")';
 
-        
+
     </script>
-    <script src="~/js/LogJS.js" ></script>
+    <script src="~/js/LogJS.js"></script>
     @await Component.InvokeAsync("Notyf")
 
 </body>
