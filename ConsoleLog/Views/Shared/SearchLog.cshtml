@@ -1,6 +1,8 @@
-﻿@using ConsoleLog.Models
-@model LogsViewModel
+﻿@using AspNetCoreHero.ToastNotification.Notyf.Models
+@using AspNetCoreHero.ToastNotification.Enums;
 
+@using ConsoleLog.Models
+@model LogsViewModel
 
 @using (Html.BeginForm("SearchLog", "Home", FormMethod.Post, new { id = "filterForm", @class = "search-container" }))
 {
@@ -29,3 +31,26 @@
         </div>
     }
 }
+
+@if (TempData.ContainsKey("Notificacoes"))
+{
+    <script>
+        $(document).ready(function () {
+            var notyf = new Notyf();
+            var notificacoesJson = '@Html.Raw(TempData["Notificacoes"])';
+            var notificacoes = JSON.parse(notificacoesJson);
+
+            notificacoes.forEach(function (notificacao) {
+                if (notificacao.Tipo === "success") {
+                    notyf.success(notificacao.Mensagem);
+                } else if (notificacao.Tipo === "error") {
+                    notyf.error(notificacao.Mensagem);
+                }
+
+            
+                // Você pode adicionar mais condições para outros tipos de notificação
+            });
+        });
+    </script>
+}
+

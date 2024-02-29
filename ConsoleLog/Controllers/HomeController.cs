@@ -29,13 +29,23 @@ namespace ConsoleLogMVC.Controllers
                 };
             }
 
-
+            AdicionarNotificacao("warning", "Teste de aviso");
             return View(viewModel);
         }
-
+        private void AdicionarNotificacao(string tipo, string mensagem)
+        {
+            var notificacoes = new List<object>();
+            if (TempData.ContainsKey("Notificacoes"))
+            {
+                notificacoes = JsonConvert.DeserializeObject<List<object>>(TempData["Notificacoes"].ToString());
+            }
+            notificacoes.Add(new { Tipo = tipo, Mensagem = mensagem });
+            TempData["Notificacoes"] = JsonConvert.SerializeObject(notificacoes);
+        }
         public IActionResult SearchLog(string? path = null, string? filterType = null, string? filterValue = null)
         {
             string sistemasJson = HttpContext.Session.GetString("Sistemas");
+            
 
             if (!string.IsNullOrEmpty(path) && string.IsNullOrEmpty(HttpContext.Session.GetString("SelectedSystemPath")))
             {
@@ -46,11 +56,14 @@ namespace ConsoleLogMVC.Controllers
             var caminho = HttpContext.Session.GetString("SelectedSystemPath");
 
             var (model, valido) = ValidarFiltroLog(filterType, filterValue, caminho, sistemasJson);
-            if (valido)
+            if (!valido)
+            {
+                AdicionarNotificacao("warning", "Valor do filtro não corresponde.");
                 return PartialView(model);
-            else
-                _notyfService.Error("Status invalido");
-                return View("Index",model);
+            }
+
+            AdicionarNotificacao("success", "Operação realizada com sucesso!");
+            return PartialView(model);
         }
         private static (LogsViewModel model, bool valido) ValidarFiltroLog(string filterType, string filterValue,
             string path, string sistemasJson)
