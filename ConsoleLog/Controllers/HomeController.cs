@@ -58,7 +58,7 @@ namespace ConsoleLogMVC.Controllers
             var (model, valido) = ValidarFiltroLog(filterType, filterValue, caminho, sistemasJson);
             if (!valido)
             {
-                AdicionarNotificacao("warning", "Valor do filtro não corresponde.");
+                AdicionarNotificacao("error", "Valor do filtro não corresponde.");
                 return PartialView(model);
             }
 

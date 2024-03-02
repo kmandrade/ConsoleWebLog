@@ -10,6 +10,8 @@
 
 .logs-sidebar {
     width: 17%; /* Ajuste a largura conforme necessário */
+    min-width: 200px; 
+    max-width: 200px; 
     background: #f2f2f2;
     padding: 10px;
     height: 60vh; /* Altura máxima para a barra lateral */
@@ -201,6 +203,8 @@
         /* Ajuste a largura da sidebar para uma fração da tela ou um valor fixo */
         width: 100%;
         height: 14vh;
+        min-width: 100%;
+        max-width: 100%;
     }
 
     .logs-container {

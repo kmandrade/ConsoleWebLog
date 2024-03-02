@@ -105,7 +105,7 @@
 
 @media screen and (max-width: 700px) {
     .lista-input {
-        left: 35%; /* Largura ainda menor para telas muito pequenas */
+        left: 50%; /* Largura ainda menor para telas muito pequenas */
         width: 240px; /* Largura menor, conforme necessário */
     }
     .container-separador {
