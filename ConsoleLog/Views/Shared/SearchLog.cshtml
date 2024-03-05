@@ -1,0 +1,54 @@
+﻿@using AspNetCoreHero.ToastNotification.Notyf.Models
+@using AspNetCoreHero.ToastNotification.Enums;
+
+@using ConsoleLog.Models
+@model LogsViewModel
+
+@using (Html.BeginForm("SearchLog", "Home", FormMethod.Post, new { id = "filterForm", @class = "search-container" }))
+{
+    <select id="filterType" name="filterType" class="filter-type">
+        <option value="Status">Status</option>
+        <option value="Descricao">Descrição</option>
+        <option value="Date">Data</option>
+    </select>
+    <input type="search" id="filterValue" name="filterValue" placeholder="Digite o valor do filtro" class="search-input">
+    <button type="submit" class="filter-button">
+        <i class="fas fa-search"></i>
+    </button>
+}
+
+
+@if (Model.ListLogs != null && Model.ListLogs.Any())
+{
+
+    foreach (var log in Model.ListLogs)
+    {
+        <div class="log-entry @(log.StatusCode == 200 ? "success" : "error")">
+            <span class="time">@log.HorarioLog.ToString("HH:mm dd/MM/yyyy")</span>
+            <span class="source">@log.Client</span>
+            <span class="message">@log.DescricaoLog</span>
+            <span style="cursor:pointer" class="search-icon"><i class="fas fa-search"></i></span> <!-- Ícone de pesquisa adicionado aqui -->
+        </div>
+    }
+}
+
+@if (TempData.ContainsKey("Notificacoes"))
+{
+    <script>
+        $(document).ready(function () {
+            var notyf = new Notyf();
+            var notificacoesJson = '@Html.Raw(TempData["Notificacoes"])';
+            var notificacoes = JSON.parse(notificacoesJson);
+
+            notificacoes.forEach(function (notificacao) {
+                if (notificacao.Tipo === "success") {
+                    notyf.success(notificacao.Mensagem);
+                } else if (notificacao.Tipo === "error") {
+                    notyf.error(notificacao.Mensagem);
+                }
+
+            });
+        });
+    </script>
+}
+

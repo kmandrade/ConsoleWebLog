@@ -1,19 +1,23 @@
 ﻿$(document).ready(function () {
-    const defaultUpdateInterval = 600000; // 60 segundos como padrão
+    const defaultUpdateInterval = 60000; // 60 segundos como padrão
     const fastUpdateInterval = 2000; // 2 segundos para atualização rápida
     let sistemas = JSON.parse(localStorage.getItem('sistemas') || '[]');
     let isUpdating = false;
     let updateInterval = setInterval(atualizarLogs, defaultUpdateInterval);
+    let pathAtualSistema = ""; // Variável global para armazenar o path do sistema selecionado
 
     inicializar();
 
     function inicializar() {
+        limparFiltros(); 
         atualizarListaSistemas();
-        marcarSistemaComoAtivo();
         configurarEventos();
-        atualizarLogs(); // Chamada inicial
+       
     }
-
+    function limparFiltros() {
+        $('#filterType').val('Status'); 
+        $('#filterValue').val(''); 
+    }
     function configurarEventos() {
         $('.systems-list').on('click', '.system', selecionarSistema);
         $('.systems-list').on('click', '.delete-system-button', deletarSistema);
@@ -21,8 +25,21 @@
         $('#cancelButton').on('click', () => $('.lista-input').hide());
         $('#inputLog').change(() => $('.lista-input').toggle($('#inputLog').is(':checked')));
         $('#toggleLogsUpdate').click(toggleAtualizacaoLogs);
+
+        // Modificando a forma como o event handler de submissão do formulário é aplicado
+        $(document).on('submit', '#filterForm', function (e) {
+            e.preventDefault(); // Previne a submissão tradicional do formulário
+            let path = sistemas.find(s => s.NomeSistema === localStorage.getItem('selectedSystem'))?.CaminhoLogSistema;
+            if (!path) {
+                alert("Por favor, selecione um sistema antes de usar o filtro.");
+                return;
+            }
+            atualizarLogs(path);
+        });
     }
 
+
+    
     function marcarSistemaComoAtivo() {
         let selectedSystem = localStorage.getItem('selectedSystem');
         if (selectedSystem) {
@@ -34,29 +51,44 @@
         }
     }
 
-    function selecionarSistema() {
+    function selecionarSistema(event) {
         $('.system').removeClass('active');
-        $(this).addClass('active');
-        let selectedSystemName = $(this).text().trim();
+        let selectedElement = $(event.currentTarget);
+        selectedElement.addClass('active');
+        let selectedSystemName = selectedElement.text().trim();
         localStorage.setItem('selectedSystem', selectedSystemName);
 
         let sistemaSelecionado = sistemas.find(s => s.NomeSistema === selectedSystemName);
         if (sistemaSelecionado) {
-            // Chamada AJAX para salvar o path do sistema selecionado na sessão do lado do servidor
-            $.ajax({
-                url: '/Home/SetSelectedSystemPath', // A URL da sua action no controlador
-                method: 'POST',
-                data: { path: sistemaSelecionado.CaminhoLogSistema }, // Envia o path como dado
-                success: function (response) {
-                    console.log("Path do sistema selecionado salvo na sessão.");
-                    // Após salvar com sucesso, atualiza os logs
-                    atualizarLogs();
-                },
-                error: function (xhr, status, error) {
-                    console.error("Erro ao salvar o path do sistema selecionado na sessão.", error);
-                }
-            });
+            pathAtualSistema = sistemaSelecionado.CaminhoLogSistema; // Atualiza a variável global com o path do sistema selecionado
+            atualizarLogs(pathAtualSistema);
         }
+    }
+
+    function atualizarLogs(path) {
+        // Se nenhum path for fornecido, usa o path da variável global
+        path = path || pathAtualSistema;
+
+        if (!path) {
+            console.error("Nenhum sistema selecionado para atualizar logs.");
+            return; // Sai da função se nenhum sistema estiver selecionado
+        }
+
+        $.ajax({
+            url: '/Home/SearchLog',
+            type: 'POST',
+            data: {
+                filterType: $('#filterType').val(),
+                filterValue: $('#filterValue').val(),
+                path: path
+            },
+            success: function (data) {
+                $('.logs-container').html(data);
+            },
+            error: function (xhr, status, error) {
+                console.error("Erro ao atualizar logs: ", error);
+            }
+        });
     }
 
 
@@ -81,37 +113,7 @@
         atualizarListaSistemas();
     }
 
-    async function atualizarLogs() {
-        let selectedSystem = localStorage.getItem('selectedSystem');
-        let sistemaSelecionado = sistemas.find(s => s.NomeSistema === selectedSystem);
-
-        if (sistemaSelecionado) {
-            try {
-                // Primeiro, salvar o path na sessão do lado do servidor
-                await $.ajax({
-                    url: '/Home/SetSelectedSystemPath',
-                    method: 'POST',
-                    data: { path: sistemaSelecionado.CaminhoLogSistema }
-                });
-                console.log("Path do sistema selecionado salvo na sessão.");
-
-                // Após salvar com sucesso, continua com a atualização dos logs
-                const response = await $.ajax({
-                    url: '/Home/SearchLog',
-                    type: 'POST',
-                    data: {
-                        filterType: $('#filterType').val(),
-                        filterValue: $('#filterValue').val(),
-                        path: sistemaSelecionado.CaminhoLogSistema
-                    }
-                });
-                $('.logs-container').html(response);
-            } catch (error) {
-                console.error("Erro ao tentar atualizar os logs", error);
-            }
-        }
-    }
-
+    
 
 
     function toggleAtualizacaoLogs() {
@@ -119,7 +121,11 @@
         $(this).toggleClass('active');
         $(this).find('i').toggleClass('fa-play fa-pause');
         clearInterval(updateInterval);
-        updateInterval = setInterval(atualizarLogs, isUpdating ? fastUpdateInterval : defaultUpdateInterval);
+
+        if (isUpdating) {
+            // Reinicia o temporizador sem passar um path específico, já que atualizarLogs vai buscar o path da variável global
+            updateInterval = setInterval(atualizarLogs, fastUpdateInterval);
+        }
     }
 
     function atualizarListaSistemas() {
