@@ -8,8 +8,8 @@
 {
     <select id="filterType" name="filterType" class="filter-type">
         <option value="Status">Status</option>
-        <option value="Descricao">Descrição</option>
-        <option value="Date">Data</option>
+        <option value="Description">Descrição</option>
+        <option value="Date">Date</option>
     </select>
     <input type="search" id="filterValue" name="filterValue" placeholder="Digite o valor do filtro" class="search-input">
     <button type="submit" class="filter-button">
@@ -27,7 +27,7 @@
             <span class="time">@log.HorarioLog.ToString("HH:mm dd/MM/yyyy")</span>
             <span class="source">@log.Client</span>
             <span class="message">@log.DescricaoLog</span>
-            <span style="cursor:pointer" class="search-icon"><i class="fas fa-search"></i></span> <!-- Ícone de pesquisa adicionado aqui -->
+            <span style="cursor:pointer" class="search-icon"><i class="fas fa-search"></i></span>
         </div>
     }
 }
