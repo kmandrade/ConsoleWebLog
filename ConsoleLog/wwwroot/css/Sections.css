@@ -10,8 +10,8 @@
 
 .logs-sidebar {
     width: 17%; /* Ajuste a largura conforme necessário */
-    min-width: 200px; 
-    max-width: 200px; 
+    min-width: 200px;
+    max-width: 200px;
     background: #f2f2f2;
     padding: 10px;
     height: 60vh; /* Altura máxima para a barra lateral */
@@ -202,7 +202,7 @@
     .logs-sidebar {
         /* Ajuste a largura da sidebar para uma fração da tela ou um valor fixo */
         width: 100%;
-        height: 14vh;
+        height: 8vh;
         min-width: 100%;
         max-width: 100%;
     }
@@ -242,7 +242,14 @@
 }
 
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 550px) {
+    .logs-sidebar {
+        /* Ajuste a largura da sidebar para uma fração da tela ou um valor fixo */
+        width: 100%;
+        height: 8vh;
+        min-width: 100%;
+        max-width: 100%;
+    }
 
     .filter-button {
         margin-left: -10px; /* Mantém a margem à direita */

@@ -94,19 +94,26 @@ namespace ConsoleLog.Service
                 }
 
                 string currentGroup = string.Empty;
-                foreach (var line in File.ReadLines(mostRecentFile))
+
+                // Abre o arquivo com opções de compartilhamento para leitura e escrita
+                using (var fileStream = new FileStream(mostRecentFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var reader = new StreamReader(fileStream))
                 {
-                    if (Regex.IsMatch(line, @"^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} -\d{2}:\d{2}\]"))
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
                     {
-                        if (currentGroup != null)
+                        if (Regex.IsMatch(line, @"^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} -\d{2}:\d{2}\]"))
                         {
-                            informacoesLog.AppendLine(); // Separador entre grupos
+                            if (currentGroup != null)
+                            {
+                                informacoesLog.AppendLine();
+                            }
+                            currentGroup = line; 
                         }
-                        currentGroup = line; // Inicia um novo grupo
-                    }
-                    else if (currentGroup != null)
-                    {
-                        informacoesLog.AppendLine(line);
+                        else if (currentGroup != null)
+                        {
+                            informacoesLog.AppendLine(line);
+                        }
                     }
                 }
 
@@ -117,6 +124,7 @@ namespace ConsoleLog.Service
                 throw new Exception($"Erro ao processar logs: {ex.Message}", ex);
             }
         }
+
         private static SortedDictionary<DateTime, LogEntry> GetDateAllFile(IEnumerable<string> file)
         {
             var logEntries = new SortedDictionary<DateTime, LogEntry>(Comparer<DateTime>.Create((x, y) => y.CompareTo(x)));

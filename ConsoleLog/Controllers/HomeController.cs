@@ -115,6 +115,7 @@ namespace ConsoleLogMVC.Controllers
         {
             string logsString = ConsoleLogService.ObterInformacoesLog(path);
             List<LogModel> logs = ConsoleLogService.ParseLogsFromString(logsString);
+            logs = (!logs.Any()) ? new List<LogModel>() : logs.OrderByDescending(l=>l.HorarioLog).ToList();
             if (!string.IsNullOrWhiteSpace(filterType) && !string.IsNullOrWhiteSpace(filterValue))
             {
                 if (filterType == "Status")
